@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7354473c-f17b-4ce3-a9f9-5c827e530d1d"
+      }
+    },
+    "owner": "moonbe77"
   }
 }
