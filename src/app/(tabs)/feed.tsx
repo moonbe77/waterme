@@ -7,7 +7,7 @@ import {
   ImageSourcePropType,
 } from "react-native";
 import { Image } from "expo-image";
-import { colors } from "../../../theme/colors";
+import { colors } from "../../theme/colors";
 
 function Feed(props) {
   return (
