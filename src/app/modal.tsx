@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet, TextInput } from "react-native";
+import { Platform, Pressable, StyleSheet, TextInput } from "react-native";
 import * as SQLite from "expo-sqlite";
 
 // import EditScreenInfo from "../../components/EditScreenInfo";
@@ -10,40 +10,58 @@ import { useEffect, useState } from "react";
 import { openDatabase } from "../service/sqlite";
 
 const db = openDatabase();
+
 export default function ModalScreen(props) {
   const [isLoading, setIsLoading] = useState(false);
-  const [info, setInfo] = useState({
-    name: "",
-    description: "",
-    image: "",
-    type: "",
-    watering: "",
-  });
+  const [info, setInfo] = useState<any[]>();
 
   useEffect(() => {
-    console.log("db", db._closed);
-    const result = db
-      .transactionAsync(async (tx) => {
-        tx.executeSqlAsync(
-          "create table if not exists plants (id integer primary key not null, name text, type text, image text)",
-          []
+    const result = db.transaction(
+      (tx) => {
+        tx.executeSql(
+          "create table if not exists plants (id integer primary key not null, name text, type text, image text)"
         );
-      }, false)
-      .then((res) => {
-        console.log("res", res);
-        db.transactionAsync(async (tx) => {
-          tx.executeSqlAsync(
-            "insert into plants (name, type, image) values (?, ?, ?)",
-            ["test", "test", "test"]
-          );
-        }).then((res) => {
-          console.log("res @", res);
-        });
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
+      },
+      () => {
+        console.log("error");
+      },
+      () => {
+        console.log("success");
+      }
+    );
   }, []);
+
+  const callDB = () => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("select * from plants", [], (_, { rows }) => {
+          console.log("rows", rows);
+          setInfo(rows._array);
+        });
+      },
+      null,
+      () => {
+        console.log("success");
+      }
+    );
+  };
+
+  const addPlant = () => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          "insert into plants (name, type, image) values (?, ?, ?)",
+          ["test", "test", "test"]
+        );
+      },
+      null,
+      () => {
+        console.log("success");
+      }
+    );
+  };
+
+  console.log("info", info);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,6 +77,12 @@ export default function ModalScreen(props) {
       <View style={styles.line} />
       <View style={styles.contentWrapper}>
         <Text style={styles.title}>Add New</Text>
+        <Pressable onPress={addPlant}>
+          <Text>Add</Text>
+        </Pressable>
+        <Pressable onPress={callDB}>
+          <Text>Call DB</Text>
+        </Pressable>
         <TextInput onChange={handleChange} placeholder="Name" />
         <TextInput onChange={handleChange} placeholder="type" />
         <TextInput onChange={handleChange} placeholder="image url" />

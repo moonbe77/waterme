@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -6,15 +6,34 @@ import {
   Pressable,
   ImageURISource,
   ImageSourcePropType,
+  ScrollView,
 } from "react-native";
 import { Image } from "expo-image";
 import { colors } from "../../theme/colors";
 import { Link, useNavigation, useRootNavigation, useRouter } from "expo-router";
-
+import { openDatabase } from "../../service/sqlite";
+const db = openDatabase();
 function Feed(props) {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [info, setInfo] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(`select * from plants`, [], (_, { rows }) => {
+          setInfo(rows._array);
+        });
+      },
+      null,
+      () => {
+        console.log("success");
+      }
+    );
+  }, []);
+
   return (
-    <View style={styles.container}>
-      {data.map((item) => (
+    <ScrollView style={styles.container}>
+      {info.map((item) => (
         <View style={styles.card} key={item.id}>
           <Image source={item.image} style={styles.image} contentFit="cover" />
           <Link href={`/details/${item.id}`} style={styles.link}>
@@ -25,7 +44,7 @@ function Feed(props) {
           </Link>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
