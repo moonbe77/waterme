@@ -1,35 +1,67 @@
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, TextInput } from "react-native";
+import * as SQLite from "expo-sqlite";
 
 // import EditScreenInfo from "../../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import { Link, useRouter } from "expo-router";
 
+import { useEffect, useState } from "react";
+import { openDatabase } from "../service/sqlite";
+
+const db = openDatabase();
 export default function ModalScreen(props) {
-  const navigation = useRouter();
-  console.log("MODAL PROPS", navigation);
+  const [isLoading, setIsLoading] = useState(false);
+  const [info, setInfo] = useState({
+    name: "",
+    description: "",
+    image: "",
+    type: "",
+    watering: "",
+  });
+
+  useEffect(() => {
+    console.log("db", db._closed);
+    const result = db
+      .transactionAsync(async (tx) => {
+        tx.executeSqlAsync(
+          "create table if not exists plants (id integer primary key not null, name text, type text, image text)",
+          []
+        );
+      }, false)
+      .then((res) => {
+        console.log("res", res);
+        db.transactionAsync(async (tx) => {
+          tx.executeSqlAsync(
+            "insert into plants (name, type, image) values (?, ?, ?)",
+            ["test", "test", "test"]
+          );
+        }).then((res) => {
+          console.log("res @", res);
+        });
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInfo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  if (isLoading) {
+    return <Text style={styles.contentWrapper}>Loading...</Text>;
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.line} />
       <View style={styles.contentWrapper}>
-        <Text style={styles.title}>Modal</Text>
-        <View
-          style={styles.separator}
-          lightColor="#eee"
-          darkColor="rgba(255,255,255,0.1)"
-        />
-        <Link
-          href="/details/123"
-          // onPress={() => {
-          //   navigation.push("/details/");
-          // }}
-        >
-          <Text>Go to Details</Text>
-        </Link>
-        {/* <EditScreenInfo path="app/modal.tsx" /> */}
-
-        {/* Use a light status bar on iOS to account for the black space above the modal */}
+        <Text style={styles.title}>Add New</Text>
+        <TextInput onChange={handleChange} placeholder="Name" />
+        <TextInput onChange={handleChange} placeholder="type" />
+        <TextInput onChange={handleChange} placeholder="image url" />
         <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       </View>
     </View>
