@@ -1,5 +1,5 @@
 import { useFonts, Inter_900Black } from "@expo-google-fonts/inter";
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
@@ -18,12 +18,7 @@ export default function RootLayout() {
     if (error) throw error;
   }, [error]);
 
-  return (
-    <>
-      {!loaded && <SplashScreen />}
-      {loaded && <RootLayoutNav />}
-    </>
-  );
+  return <>{loaded && <RootLayoutNav />}</>;
 }
 
 export function RootLayoutNav() {
@@ -32,7 +27,11 @@ export function RootLayoutNav() {
       {/* <ErrorToastContainer> */}
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+        <Stack.Screen
+          name="modal"
+          options={{ presentation: "modal", headerShown: false }}
+        />
+        <Stack.Screen name="details" options={{}} />
       </Stack>
       {/* </ErrorToastContainer> */}
       <StatusBar />

@@ -1,15 +1,16 @@
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Link, useLocalSearchParams } from "expo-router";
 import { View, Text } from "react-native";
-function DetailsWrapper(props) {
+
+function index(props) {
   const { slug } = useLocalSearchParams();
-  console.log(slug);
+
   return (
     <View>
-      <Link href="/">Go to Home</Link>
+      <Text>Details</Text>
       <Text>{slug}</Text>
     </View>
   );
 }
 
-export default DetailsWrapper;
+export default index;

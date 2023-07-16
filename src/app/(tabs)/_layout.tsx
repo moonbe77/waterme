@@ -24,9 +24,8 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="index"
-        // TODO: Type
         options={{
-          title: "Tab One",
+          title: "Home",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>

@@ -3,22 +3,26 @@ import {
   View,
   Text,
   StyleSheet,
+  Pressable,
   ImageURISource,
   ImageSourcePropType,
 } from "react-native";
 import { Image } from "expo-image";
 import { colors } from "../../theme/colors";
+import { Link, useNavigation, useRootNavigation, useRouter } from "expo-router";
 
 function Feed(props) {
   return (
     <View style={styles.container}>
       {data.map((item) => (
-        <View key={item.id} style={styles.card}>
+        <View style={styles.card} key={item.id}>
           <Image source={item.image} style={styles.image} contentFit="cover" />
-          <View style={styles.cardContent}>
-            <Text style={styles.title}>{item.name}</Text>
-            <Text style={styles.type}>{item.type}</Text>
-          </View>
+          <Link href={`/details/${item.id}`} style={styles.link}>
+            <View style={styles.cardContent}>
+              <Text style={styles.title}>{item.name}</Text>
+              <Text style={styles.type}>{item.type}</Text>
+            </View>
+          </Link>
         </View>
       ))}
     </View>
@@ -30,28 +34,33 @@ export default Feed;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: "white",
   },
   card: {
-    backgroundColor: colors.background,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    backgroundColor: colors.grape,
     borderRadius: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
     elevation: 5,
     height: 200,
+    shadowOffset: { width: 0, height: 0 },
   },
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 10,
   },
-  cardContent: {
+  link: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
     position: "absolute",
-    padding: 16,
     backgroundColor: "#fff9",
+  },
+  cardContent: {
+    padding: 16,
     width: "100%",
     height: "100%",
   },
