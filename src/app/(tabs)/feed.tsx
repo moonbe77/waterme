@@ -7,17 +7,19 @@ import {
   ImageURISource,
   ImageSourcePropType,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { Image } from "expo-image";
 import { colors } from "../../theme/colors";
 import { Link, useNavigation, useRootNavigation, useRouter } from "expo-router";
 import { openDatabase } from "../../service/sqlite";
+import { IPlant } from "../../models/plantsModel";
 const db = openDatabase();
 function Feed(props) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [info, setInfo] = React.useState<any[]>([]);
 
-  useEffect(() => {
+  const getData = () => {
     db.transaction(
       (tx) => {
         tx.executeSql(`select * from plants`, [], (_, { rows }) => {
@@ -26,29 +28,67 @@ function Feed(props) {
       },
       null,
       () => {
-        console.log("success");
+        setIsLoading(false);
       }
     );
+  };
+  useEffect(() => {
+    console.log("useEffect");
+    setIsLoading(true);
+    getData();
   }, []);
 
+  const deleteAll = () => {
+    setIsLoading(true);
+
+    db.transaction(
+      (tx) => {
+        tx.executeSql(`delete from plants`, [], (_, { rows }) => {
+          setInfo(rows._array);
+        });
+      },
+      null,
+      () => {
+        console.log("success");
+        setIsLoading(false);
+      }
+    );
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      {info.map((item) => (
-        <View style={styles.card} key={item.id}>
-          <Image source={item.image} style={styles.image} contentFit="cover" />
-          <Link href={`/details/${item.id}`} style={styles.link}>
-            <View style={styles.cardContent}>
-              <Text style={styles.title}>{item.name}</Text>
-              <Text style={styles.type}>{item.type}</Text>
-            </View>
-          </Link>
-        </View>
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <View>
+        <Pressable onPress={deleteAll}>
+          <Text>Delete all</Text>
+        </Pressable>
+      </View>
+      <FlatList
+        data={info}
+        renderItem={({ item }) => <Item item={item} />}
+        keyExtractor={(item) => item.id}
+        refreshing={isLoading}
+        onRefresh={() => {
+          setIsLoading(true);
+          getData();
+        }}
+      />
+    </View>
   );
 }
 
 export default Feed;
+
+const Item = ({ item }: { item: IPlant }) => (
+  <View style={styles.card} key={item.id}>
+    <Image source={item.image} style={styles.image} contentFit="cover" />
+    <Link href={`/details/${item.id}`} style={styles.link}>
+      <View style={styles.cardContent}>
+        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.type}>{item.type}</Text>
+      </View>
+    </Link>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
