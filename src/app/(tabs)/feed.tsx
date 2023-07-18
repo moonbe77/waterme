@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,15 +11,19 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { colors } from "../../theme/colors";
-import { Link, useNavigation, useRootNavigation, useRouter } from "expo-router";
+import { Link, useNavigation, useFocusEffect, useRouter } from "expo-router";
 import { openDatabase } from "../../service/sqlite";
 import { IPlant } from "../../models/plantsModel";
 const db = openDatabase();
 function Feed(props) {
+  const router = useRouter();
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = React.useState(false);
   const [info, setInfo] = React.useState<any[]>([]);
 
-  const getData = () => {
+  console.log("PROPS ", { props, router, navigation });
+  const getData = useCallback(() => {
+    setIsLoading(true);
     db.transaction(
       (tx) => {
         tx.executeSql(`select * from plants`, [], (_, { rows }) => {
@@ -31,12 +35,9 @@ function Feed(props) {
         setIsLoading(false);
       }
     );
-  };
-  useEffect(() => {
-    console.log("useEffect");
-    setIsLoading(true);
-    getData();
   }, []);
+
+  useFocusEffect(useCallback(getData, []));
 
   const deleteAll = () => {
     setIsLoading(true);
@@ -68,7 +69,6 @@ function Feed(props) {
         keyExtractor={(item) => item.id}
         refreshing={isLoading}
         onRefresh={() => {
-          setIsLoading(true);
           getData();
         }}
       />

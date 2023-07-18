@@ -47,6 +47,7 @@ export default function ModalScreen(props) {
   };
 
   const addPlant = () => {
+    console.log("adding plant");
     db.transaction(
       (tx) => {
         tx.executeSql(
