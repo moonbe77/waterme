@@ -19,7 +19,7 @@ function Feed(props) {
   const router = useRouter();
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = React.useState(false);
-  const [info, setInfo] = React.useState<any[]>([]);
+  const [info, setInfo] = React.useState<IPlant[]>([]);
 
   // console.log("PROPS ", { props, router, navigation });
   const getData = useCallback(() => {
@@ -27,6 +27,7 @@ function Feed(props) {
     db.transaction(
       (tx) => {
         tx.executeSql(`select * from plants`, [], (_, { rows }) => {
+          console.log("rows ", rows);
           setInfo(rows._array);
         });
       },
@@ -66,7 +67,7 @@ function Feed(props) {
       <FlatList
         data={info}
         renderItem={({ item }) => <Item item={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => `${item.id}`}
         refreshing={isLoading}
         onRefresh={() => {
           getData();
@@ -85,6 +86,11 @@ const Item = ({ item }: { item: IPlant }) => (
       <View style={styles.cardContent}>
         <Text style={styles.title}>{item.name}</Text>
         <Text style={styles.type}>{item.type}</Text>
+        <Text style={styles.type}>Image:{item.image}</Text>
+        <Text style={styles.type}>
+          Next Fertilizing: {item.nextFertilizing}
+        </Text>
+        <Text style={styles.type}>Next watering: {item.nextWatering}</Text>
       </View>
     </Link>
   </View>

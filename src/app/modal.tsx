@@ -24,7 +24,7 @@ export default function ModalScreen(props) {
   const [info, setInfo] = useState<IPlant | null>(null);
 
   useEffect(() => {
-    const result = db.transaction(
+    db.transaction(
       (tx) => {
         tx.executeSql(
           `create table if not exists plants (id integer primary key not null, 
@@ -39,38 +39,20 @@ export default function ModalScreen(props) {
             notes text)`
         );
       },
-      () => {
-        console.log("error");
+      (error) => {
+        console.log("error creating table ", error);
       },
       () => {
-        console.log("success");
+        console.log("Table created successfully");
       }
     );
   }, []);
 
-  // const callDB = () => {
-  //   db.transaction(
-  //     (tx) => {
-  //       tx.executeSql("select * from plants", [], (_, { rows }) => {
-
-  //         setInfo(rows._array);
-  //       });
-  //     },
-  //     null,
-  //     () => {
-  //       console.log("success");
-  //     }
-  //   );
-  // };
-
-  const addPlant = () => {
-    console.log("adding plant");
+  const dropDb = () => {
+    console.log("dropping db");
     db.transaction(
       (tx) => {
-        tx.executeSql(
-          "insert into plants (name, type, image) values (?, ?, ?)",
-          [info.name, info.type, info.image]
-        );
+        tx.executeSql("DROP TABLE IF EXISTS plants");
       },
       (error) => {
         console.log("error", error);
@@ -81,7 +63,30 @@ export default function ModalScreen(props) {
     );
   };
 
-  console.log("info", info);
+  const addPlant = () => {
+    console.log("adding plant");
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          "insert into plants (name, type, image, remainder, nextWatering, nextFertilizing) values (?, ?, ?, ?,?,?)",
+          [
+            info.name,
+            info.type,
+            info.image,
+            info.remainder,
+            info.nextWatering,
+            info.nextFertilizing,
+          ]
+        );
+      },
+      (error) => {
+        console.log("error", error);
+      },
+      () => {
+        console.log("success");
+      }
+    );
+  };
 
   const handleChange = (name, value) => {
     setInfo((prev) => ({ ...prev, [name]: value }));
@@ -96,6 +101,9 @@ export default function ModalScreen(props) {
       <View style={styles.line} />
       <View style={styles.contentWrapper}>
         <Text style={styles.title}>Add New</Text>
+        <Pressable onPress={dropDb}>
+          <Text>DROP DROP </Text>
+        </Pressable>
         <Pressable onPress={addPlant}>
           <Text>Add</Text>
         </Pressable>
@@ -116,6 +124,24 @@ export default function ModalScreen(props) {
             id="image"
             onChangeText={(value) => handleChange("image", value)}
             placeholder="image url"
+            style={styles.input}
+          />
+          <TextInput
+            id="image"
+            onChangeText={(value) => handleChange("remainder", value)}
+            placeholder="remainder"
+            style={styles.input}
+          />
+          <TextInput
+            id="image"
+            onChangeText={(value) => handleChange("nextWatering", value)}
+            placeholder="next watering"
+            style={styles.input}
+          />
+          <TextInput
+            id="image"
+            onChangeText={(value) => handleChange("nextFertilizing", value)}
+            placeholder="next fertilizing"
             style={styles.input}
           />
         </View>

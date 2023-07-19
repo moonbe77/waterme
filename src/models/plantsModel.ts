@@ -5,4 +5,10 @@ export interface IPlant {
   description: string;
   image: string;
   type: string;
+  remainder: string
+  lastWatered: string
+  nextWatering: string
+  lastFertilized: string
+  nextFertilizing: string
+  notes: string
 }
