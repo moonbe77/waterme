@@ -21,7 +21,7 @@ function Feed(props) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [info, setInfo] = React.useState<any[]>([]);
 
-  console.log("PROPS ", { props, router, navigation });
+  // console.log("PROPS ", { props, router, navigation });
   const getData = useCallback(() => {
     setIsLoading(true);
     db.transaction(

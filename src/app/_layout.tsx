@@ -31,7 +31,7 @@ export function RootLayoutNav() {
           name="modal"
           options={{ presentation: "modal", headerShown: false }}
         />
-        <Stack.Screen name="details" options={{}} />
+        {/* <Stack.Screen name="/details" options={{}} /> */}
       </Stack>
       {/* </ErrorToastContainer> */}
       <StatusBar />

@@ -1,5 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { Platform, Pressable, StyleSheet, TextInput } from "react-native";
+import {
+  NativeSyntheticEvent,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  TextInputChangeEventData,
+} from "react-native";
 import * as SQLite from "expo-sqlite";
 
 // import EditScreenInfo from "../../components/EditScreenInfo";
@@ -8,12 +15,13 @@ import { Link, useRouter } from "expo-router";
 
 import { useEffect, useState } from "react";
 import { openDatabase } from "../service/sqlite";
+import { IPlant } from "../models/plantsModel";
 
 const db = openDatabase();
 
 export default function ModalScreen(props) {
   const [isLoading, setIsLoading] = useState(false);
-  const [info, setInfo] = useState<any[]>();
+  const [info, setInfo] = useState<IPlant | null>(null);
 
   useEffect(() => {
     const result = db.transaction(
@@ -31,20 +39,20 @@ export default function ModalScreen(props) {
     );
   }, []);
 
-  const callDB = () => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql("select * from plants", [], (_, { rows }) => {
-          console.log("rows", rows);
-          setInfo(rows._array);
-        });
-      },
-      null,
-      () => {
-        console.log("success");
-      }
-    );
-  };
+  // const callDB = () => {
+  //   db.transaction(
+  //     (tx) => {
+  //       tx.executeSql("select * from plants", [], (_, { rows }) => {
+
+  //         setInfo(rows._array);
+  //       });
+  //     },
+  //     null,
+  //     () => {
+  //       console.log("success");
+  //     }
+  //   );
+  // };
 
   const addPlant = () => {
     console.log("adding plant");
@@ -52,10 +60,12 @@ export default function ModalScreen(props) {
       (tx) => {
         tx.executeSql(
           "insert into plants (name, type, image) values (?, ?, ?)",
-          ["test", "test", "test"]
+          [info.name, info.type, info.image]
         );
       },
-      null,
+      (error) => {
+        console.log("error", error);
+      },
       () => {
         console.log("success");
       }
@@ -64,8 +74,7 @@ export default function ModalScreen(props) {
 
   console.log("info", info);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (name, value) => {
     setInfo((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -81,12 +90,26 @@ export default function ModalScreen(props) {
         <Pressable onPress={addPlant}>
           <Text>Add</Text>
         </Pressable>
-        <Pressable onPress={callDB}>
-          <Text>Call DB</Text>
-        </Pressable>
-        <TextInput onChange={handleChange} placeholder="Name" />
-        <TextInput onChange={handleChange} placeholder="type" />
-        <TextInput onChange={handleChange} placeholder="image url" />
+        <View style={styles.formWrapper}>
+          <TextInput
+            id="name"
+            onChangeText={(value) => handleChange("name", value)}
+            placeholder="Name"
+            style={styles.input}
+          />
+          <TextInput
+            id="type"
+            onChangeText={(value) => handleChange("type", value)}
+            placeholder="type"
+            style={styles.input}
+          />
+          <TextInput
+            id="image"
+            onChangeText={(value) => handleChange("image", value)}
+            placeholder="image url"
+            style={styles.input}
+          />
+        </View>
         <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       </View>
     </View>
@@ -111,8 +134,8 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    // alignItems: "center",
+    // justifyContent: "center",
   },
   title: {
     fontSize: 20,
@@ -122,5 +145,24 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
+  },
+  formWrapper: {
+    margin: 16,
+    flex: 1,
+    height: 400,
+    gap: 12,
+    display: "flex",
+    justifyContent: "flex-start",
+  },
+  input: {
+    borderRadius: 8,
+
+    fontSize: 16,
+    padding: 8,
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "gray",
+    // backgroundColor: "",
+    height: 45,
   },
 });
