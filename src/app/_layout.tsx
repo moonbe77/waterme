@@ -1,9 +1,20 @@
 import { useFonts, Inter_900Black } from "@expo-google-fonts/inter";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { registerForPushNotificationsAsync } from "../service/pushNotifications";
+import { useNotificationObserver } from "../hooks/useNotificationObserver";
 export { ErrorBoundary } from "expo-router";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -22,6 +33,42 @@ export default function RootLayout() {
 }
 
 export function RootLayoutNav() {
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState<
+    Notifications.Notification | undefined
+  >(undefined);
+  const notificationListener = useRef<Notifications.Subscription | undefined>();
+  const responseListener = useRef<Notifications.Subscription | undefined>();
+  useNotificationObserver();
+
+  console.log("Device ", {
+    expoPushToken,
+    notification,
+  });
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
   return (
     <>
       {/* <ErrorToastContainer> */}
