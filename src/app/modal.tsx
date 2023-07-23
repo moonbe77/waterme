@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import {
+  Alert,
   NativeSyntheticEvent,
   Platform,
   Pressable,
@@ -7,8 +8,9 @@ import {
   TextInput,
   TextInputChangeEventData,
 } from "react-native";
-import * as SQLite from "expo-sqlite";
-
+import { themedComponents } from "../theme/common_styles";
+import { schedulePushNotification } from "../service/pushNotifications";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 // import EditScreenInfo from "../../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import { Link, useRouter } from "expo-router";
@@ -35,7 +37,8 @@ export default function ModalScreen(props) {
             lastWatered text, 
             nextWatering text, 
             lastFertilized text, 
-            nextFertilizing text, 
+            nextFertilizing text,
+            notificationTime text, 
             notes text)`
         );
       },
@@ -64,18 +67,41 @@ export default function ModalScreen(props) {
   };
 
   const addPlant = () => {
-    console.log("adding plant");
+    console.log("adding plant", { info });
+
+    if (!info?.name) {
+      Alert.alert("Please fill info");
+      return;
+    }
+
+    // if nextWatering is  set, set remainder to nextWatering
+    if (info?.nextWatering) {
+      // convert date to seconds
+      const remainder = new Date(Number(info.nextWatering)).getTime() / 1000;
+      console.log("remainder", remainder);
+
+      schedulePushNotification({
+        content: {
+          title: "Watering reminder",
+          body: `Don't forget to water ${info.name}`,
+          data: { data: "goes here data prop", url: "/details/1" },
+        },
+        trigger: { seconds: remainder },
+      });
+    }
+
     db.transaction(
       (tx) => {
         tx.executeSql(
-          "insert into plants (name, type, image, remainder, nextWatering, nextFertilizing) values (?, ?, ?, ?,?,?)",
+          "insert into plants (name, type, image, remainder, nextWatering, nextFertilizing, notificationTime) values (?, ?, ?, ?,?,?,?)",
           [
             info.name,
             info.type,
             info.image,
-            info.remainder,
             info.nextWatering,
+            new Date(Number(info.nextWatering)).getTime() / 1000,
             info.nextFertilizing,
+            info.notificationTime.toISOString(),
           ]
         );
       },
@@ -100,50 +126,78 @@ export default function ModalScreen(props) {
     <View style={styles.container}>
       <View style={styles.line} />
       <View style={styles.contentWrapper}>
-        <Text style={styles.title}>Add New</Text>
-        <Pressable onPress={dropDb}>
-          <Text>DROP DROP </Text>
-        </Pressable>
-        <Pressable onPress={addPlant}>
-          <Text>Add</Text>
-        </Pressable>
+        <View style={styles.flexRow}>
+          <Text style={styles.title}>Add New</Text>
+          <Pressable
+            onPress={dropDb}
+            // style={themedComponents.pressable.button}
+          >
+            <Text
+            //  style={themedComponents.pressable.text }
+            >
+              DROP TABLE DANGER
+            </Text>
+          </Pressable>
+        </View>
         <View style={styles.formWrapper}>
           <TextInput
             id="name"
             onChangeText={(value) => handleChange("name", value)}
             placeholder="Name"
-            style={styles.input}
+            style={themedComponents.input.input}
           />
-          <TextInput
+          {/* <TextInput
             id="type"
             onChangeText={(value) => handleChange("type", value)}
             placeholder="type"
-            style={styles.input}
+            style={themedComponents.input.input}
           />
           <TextInput
             id="image"
             onChangeText={(value) => handleChange("image", value)}
             placeholder="image url"
-            style={styles.input}
+            style={themedComponents.input.input}
           />
           <TextInput
             id="image"
             onChangeText={(value) => handleChange("remainder", value)}
             placeholder="remainder"
-            style={styles.input}
-          />
+            style={themedComponents.input.input}
+          /> */}
+
           <TextInput
             id="image"
+            inputMode="numeric"
             onChangeText={(value) => handleChange("nextWatering", value)}
-            placeholder="next watering"
-            style={styles.input}
+            placeholder="Cada cuanto regar en dias"
+            style={themedComponents.input.input}
           />
           <TextInput
             id="image"
+            inputMode="numeric"
             onChangeText={(value) => handleChange("nextFertilizing", value)}
-            placeholder="next fertilizing"
-            style={styles.input}
+            placeholder="next fertilizing interval in days"
+            style={themedComponents.input.input}
           />
+          <View>
+            <Text>Notification Time</Text>
+            <RNDateTimePicker
+              mode="time"
+              value={info.notificationTime || new Date()}
+              onChange={(event, selectedDate) => {
+                console.log({ event, selectedDate });
+                handleChange("notificationTime", selectedDate);
+              }}
+            />
+          </View>
+          <View style={styles.flexRow}>
+            <Pressable
+              onPress={addPlant}
+              style={themedComponents.pressable.button}
+            >
+              <Text style={themedComponents.pressable.text}>Add ITEM</Text>
+            </Pressable>
+          </View>
         </View>
         <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       </View>
@@ -169,8 +223,6 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     flex: 1,
-    // alignItems: "center",
-    // justifyContent: "center",
   },
   title: {
     fontSize: 20,
@@ -189,15 +241,9 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-start",
   },
-  input: {
-    borderRadius: 8,
-
-    fontSize: 16,
-    padding: 8,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "gray",
-    // backgroundColor: "",
-    height: 45,
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });

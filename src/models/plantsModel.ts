@@ -10,5 +10,6 @@ export interface IPlant {
   nextWatering: string
   lastFertilized: string
   nextFertilizing: string
+  notificationTime: Date
   notes: string
 }

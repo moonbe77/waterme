@@ -91,6 +91,9 @@ const Item = ({ item }: { item: IPlant }) => (
           Next Fertilizing: {item.nextFertilizing}
         </Text>
         <Text style={styles.type}>Next watering: {item.nextWatering}</Text>
+        <Text style={styles.type}>
+          notif time: {item.notificationTime.toString()}
+        </Text>
       </View>
     </Link>
   </View>

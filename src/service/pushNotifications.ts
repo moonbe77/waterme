@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 
 
-export async function schedulePushNotification() {
+export async function schedulePushNotification(data: Notifications.NotificationRequestInput) {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "You've got mail! 📬",

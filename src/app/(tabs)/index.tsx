@@ -8,7 +8,7 @@ export default function TabOneScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home</Text>
-      <Button onPress={schedulePushNotification} title="Set NOTIFICATION" />
+      {/* <Button onPress={schedulePushNotification} title="Set NOTIFICATION" /> */}
       <View
         style={styles.separator}
         lightColor="#eee"
