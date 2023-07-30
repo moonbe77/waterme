@@ -1,17 +1,16 @@
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { dismissAllNotificationsAsync } from "expo-notifications";
 
 
 
+export async function cancelAllScheduledNotifications() {
+  return await Notifications.cancelAllScheduledNotificationsAsync()
+}
 export async function schedulePushNotification(data: Notifications.NotificationRequestInput) {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: 'Here is the notification body',
-      data: { data: 'goes here', url: '/details/1' },
-    },
-    trigger: { seconds: 2 },
+  return await Notifications.scheduleNotificationAsync({
+    ...data,
   });
 }
 
@@ -46,3 +45,5 @@ export async function registerForPushNotificationsAsync() {
 
   return token;
 }
+
+

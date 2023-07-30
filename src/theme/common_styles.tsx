@@ -25,10 +25,10 @@ export const input = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
     padding: 8,
-    width: "100%",
     borderWidth: 1,
     borderColor: "gray",
     height: 45,
+    backgroundColor: "#fff",
   },
 });
 

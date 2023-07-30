@@ -3,7 +3,6 @@ import {
   Alert,
   NativeSyntheticEvent,
   Platform,
-  Pressable,
   StyleSheet,
   TextInput,
   TextInputChangeEventData,
@@ -11,19 +10,33 @@ import {
 import { themedComponents } from "../theme/common_styles";
 import { schedulePushNotification } from "../service/pushNotifications";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-// import EditScreenInfo from "../../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
-import { Link, useRouter } from "expo-router";
-
+import {
+  Pressable,
+  Input,
+  Box,
+  Container,
+  HStack,
+  Flex,
+  VStack,
+  Text,
+  Button,
+  Heading,
+  useToast,
+} from "native-base";
+import { View } from "../components/Themed";
+import { Link, useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { openDatabase } from "../service/sqlite";
 import { IPlant } from "../models/plantsModel";
+import { calculateNotificationInterval } from "../service/helpers";
 
 const db = openDatabase();
 
 export default function ModalScreen(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [info, setInfo] = useState<IPlant | null>(null);
+  const navigation = useNavigation();
+  const toast = useToast();
 
   useEffect(() => {
     db.transaction(
@@ -33,7 +46,7 @@ export default function ModalScreen(props) {
             name text, 
             type text, 
             image text, 
-            remainder text, 
+            notificationId text, 
             lastWatered text, 
             nextWatering text, 
             lastFertilized text, 
@@ -67,8 +80,6 @@ export default function ModalScreen(props) {
   };
 
   const addPlant = () => {
-    console.log("adding plant", { info });
-
     if (!info?.name) {
       Alert.alert("Please fill info");
       return;
@@ -76,9 +87,11 @@ export default function ModalScreen(props) {
 
     // if nextWatering is  set, set remainder to nextWatering
     if (info?.nextWatering) {
-      // convert date to seconds
-      const remainder = new Date(Number(info.nextWatering)).getTime() / 1000;
-      console.log("remainder", remainder);
+      // convert interval in days to seconds
+      const remainder = calculateNotificationInterval(
+        Number(info.nextWatering),
+        info.notificationTime
+      );
 
       schedulePushNotification({
         content: {
@@ -86,32 +99,41 @@ export default function ModalScreen(props) {
           body: `Don't forget to water ${info.name}`,
           data: { data: "goes here data prop", url: "/details/1" },
         },
-        trigger: { seconds: remainder },
+        trigger: { seconds: Number(remainder), repeats: true },
+      }).then((res) => {
+        db.transaction(
+          (tx) => {
+            tx.executeSql(
+              "insert into plants (name, type, image, notificationId, nextWatering, nextFertilizing, notificationTime) values (?, ?, ?, ?,?,?,?)",
+              [
+                info.name,
+                info.type,
+                info.image,
+                res,
+                remainder,
+                info.nextFertilizing,
+                info?.notificationTime
+                  ? info.notificationTime.toISOString()
+                  : "",
+              ]
+            );
+          },
+          (error) => {
+            console.log("error", error);
+          },
+          () => {
+            toast.show({
+              title: "Remainder set successfully",
+              variant: "top-accent",
+              duration: 3000,
+              placement: "top",
+            });
+            //close modal
+            navigation.goBack();
+          }
+        );
       });
     }
-
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          "insert into plants (name, type, image, remainder, nextWatering, nextFertilizing, notificationTime) values (?, ?, ?, ?,?,?,?)",
-          [
-            info.name,
-            info.type,
-            info.image,
-            info.nextWatering,
-            new Date(Number(info.nextWatering)).getTime() / 1000,
-            info.nextFertilizing,
-            info.notificationTime.toISOString(),
-          ]
-        );
-      },
-      (error) => {
-        console.log("error", error);
-      },
-      () => {
-        console.log("success");
-      }
-    );
   };
 
   const handleChange = (name, value) => {
@@ -125,82 +147,73 @@ export default function ModalScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.line} />
-      <View style={styles.contentWrapper}>
-        <View style={styles.flexRow}>
-          <Text style={styles.title}>Add New</Text>
-          <Pressable
-            onPress={dropDb}
-            // style={themedComponents.pressable.button}
-          >
-            <Text
-            //  style={themedComponents.pressable.text }
-            >
-              DROP TABLE DANGER
-            </Text>
-          </Pressable>
-        </View>
-        <View style={styles.formWrapper}>
-          <TextInput
+      <View>
+        <Box alignItems="center" mb={4}>
+          <Heading size="xl">Set New Remainder</Heading>
+        </Box>
+        <VStack
+          space={4}
+          overflow="hidden"
+          borderColor="coolGray.400"
+          background="gray.700"
+          h="full"
+          w="full"
+          p={4}
+          alignItems="center"
+        >
+          <Input
             id="name"
             onChangeText={(value) => handleChange("name", value)}
-            placeholder="Name"
-            style={themedComponents.input.input}
+            placeholder="Name / Title"
+            size="xl"
+            isFullWidth={true}
+            color={"white"}
           />
-          {/* <TextInput
-            id="type"
-            onChangeText={(value) => handleChange("type", value)}
-            placeholder="type"
-            style={themedComponents.input.input}
-          />
-          <TextInput
-            id="image"
-            onChangeText={(value) => handleChange("image", value)}
-            placeholder="image url"
-            style={themedComponents.input.input}
-          />
-          <TextInput
-            id="image"
-            onChangeText={(value) => handleChange("remainder", value)}
-            placeholder="remainder"
-            style={themedComponents.input.input}
-          /> */}
 
-          <TextInput
-            id="image"
+          <Input
+            // w="1/2"
+            id="waterInterval"
             inputMode="numeric"
             onChangeText={(value) => handleChange("nextWatering", value)}
-            placeholder="Cada cuanto regar en dias"
-            style={themedComponents.input.input}
+            placeholder="Watering interval in days"
+            size="xl"
+            color={"white"}
           />
-          <TextInput
-            id="image"
+          <Input
+            id="fertilizingInterval"
+            // w="1/2"
             inputMode="numeric"
             onChangeText={(value) => handleChange("nextFertilizing", value)}
-            placeholder="next fertilizing interval in days"
-            style={themedComponents.input.input}
+            placeholder="Next fertilizing interval in days"
+            size="xl"
+            color={"white"}
           />
-          <View>
-            <Text>Notification Time</Text>
+
+          <Box w="full">
+            <Text color="amber.100">Notification Time</Text>
             <RNDateTimePicker
+              style={{ backgroundColor: "white" }}
+              themeVariant="light"
+              display="spinner"
               mode="time"
-              value={info.notificationTime || new Date()}
+              value={info?.notificationTime || new Date()}
               onChange={(event, selectedDate) => {
                 console.log({ event, selectedDate });
                 handleChange("notificationTime", selectedDate);
               }}
             />
-          </View>
-          <View style={styles.flexRow}>
-            <Pressable
-              onPress={addPlant}
-              style={themedComponents.pressable.button}
-            >
-              <Text style={themedComponents.pressable.text}>Add ITEM</Text>
-            </Pressable>
-          </View>
-        </View>
-        <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+          </Box>
+          <Box alignItems="center">
+            <Button onPress={addPlant} size="lg">
+              Set Reminder
+            </Button>
+          </Box>
+        </VStack>
+        <Pressable onPress={dropDb}>
+          <Text>DROP TABLE DANGER</Text>
+        </Pressable>
       </View>
+      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
   );
 }
@@ -222,28 +235,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   contentWrapper: {
+    backgroundColor: "#ff5",
     flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-  formWrapper: {
-    margin: 16,
-    flex: 1,
-    height: 400,
-    gap: 12,
-    display: "flex",
-    justifyContent: "flex-start",
-  },
-  flexRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    width: "100%",
+    height: "100%",
   },
 });

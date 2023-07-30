@@ -5,7 +5,7 @@ export interface IPlant {
   description: string;
   image: string;
   type: string;
-  remainder: string
+  notificationId: string
   lastWatered: string
   nextWatering: string
   lastFertilized: string

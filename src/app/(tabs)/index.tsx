@@ -1,14 +1,25 @@
-import { Button, Pressable, StyleSheet } from "react-native";
-import { pressable } from "../../theme/common_styles";
+import { Button, StyleSheet } from "react-native";
+import { getAllScheduledNotificationsAsync } from "expo-notifications";
 
-// import EditScreenInfo from "../../../components/EditScreenInfo";
 import { Text, View } from "../../components/Themed";
-import { schedulePushNotification } from "../../service/pushNotifications";
+import { useEffect } from "react";
 export default function TabOneScreen() {
+  useEffect(() => {
+    getAllScheduledNotificationsAsync().then((res) => {
+      console.log("getAllScheduledNotificationsAsync ", res);
+    });
+  }, []);
+
+  const getNotifications = () => {
+    getAllScheduledNotificationsAsync().then((res) => {
+      console.log("getAllScheduledNotificationsAsync ", res);
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home</Text>
-      {/* <Button onPress={schedulePushNotification} title="Set NOTIFICATION" /> */}
+      <Button onPress={getNotifications} title="log NOTIFICATION" />
       <View
         style={styles.separator}
         lightColor="#eee"

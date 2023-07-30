@@ -6,6 +6,8 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { registerForPushNotificationsAsync } from "../service/pushNotifications";
 import { useNotificationObserver } from "../hooks/useNotificationObserver";
+import { NativeBaseProvider } from "native-base";
+import { Platform } from "react-native";
 export { ErrorBoundary } from "expo-router";
 
 Notifications.setNotificationHandler({
@@ -70,18 +72,15 @@ export function RootLayoutNav() {
   }, []);
 
   return (
-    <>
-      {/* <ErrorToastContainer> */}
+    <NativeBaseProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", headerShown: false }}
         />
-        {/* <Stack.Screen name="/details" options={{}} /> */}
       </Stack>
-      {/* </ErrorToastContainer> */}
-      <StatusBar />
-    </>
+      <StatusBar style={Platform.OS === "ios" ? "dark" : "auto"} />
+    </NativeBaseProvider>
   );
 }

@@ -14,6 +14,8 @@ import { colors } from "../../theme/colors";
 import { Link, useNavigation, useFocusEffect, useRouter } from "expo-router";
 import { openDatabase } from "../../service/sqlite";
 import { IPlant } from "../../models/plantsModel";
+import { cancelAllScheduledNotifications } from "../../service/pushNotifications";
+
 const db = openDatabase();
 function Feed(props) {
   const router = useRouter();
@@ -53,6 +55,7 @@ function Feed(props) {
       () => {
         console.log("success");
         setIsLoading(false);
+        cancelAllScheduledNotifications();
       }
     );
   };
@@ -91,6 +94,7 @@ const Item = ({ item }: { item: IPlant }) => (
           Next Fertilizing: {item.nextFertilizing}
         </Text>
         <Text style={styles.type}>Next watering: {item.nextWatering}</Text>
+        <Text style={styles.type}>NotificationId: {item.notificationId}</Text>
         <Text style={styles.type}>
           notif time: {item.notificationTime.toString()}
         </Text>
