@@ -4,9 +4,9 @@ import { View, Text } from "react-native";
 import { openDatabase } from "../../service/sqlite";
 
 const db = openDatabase();
-function DetailsScreen(props) {
+function DetailsScreen() {
   const { slug } = useLocalSearchParams();
-  const [isLoading, setIsLoading] = React.useState(false);
+  // const [isLoading, setIsLoading] = React.useState(false);
   const [info, setInfo] = React.useState<any[]>();
 
   useEffect(() => {
