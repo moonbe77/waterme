@@ -23,7 +23,7 @@ function DetailsScreen() {
       },
       null,
       () => {
-        console.log('success')
+        console.log('success   lol')
       }
     )
   }, [slug])
