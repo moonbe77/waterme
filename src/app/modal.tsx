@@ -1,22 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  Alert,
-  NativeSyntheticEvent,
-  Platform,
-  StyleSheet,
-  TextInput,
-  TextInputChangeEventData,
-} from "react-native";
-import { themedComponents } from "../theme/common_styles";
+import { Alert, Platform, StyleSheet } from "react-native";
 import { schedulePushNotification } from "../service/pushNotifications";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {
   Pressable,
   Input,
   Box,
-  Container,
-  HStack,
-  Flex,
   VStack,
   Text,
   Button,
@@ -24,16 +13,15 @@ import {
   useToast,
 } from "native-base";
 import { View } from "../components/Themed";
-import { Link, useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { openDatabase } from "../service/sqlite";
 import { IPlant } from "../models/plantsModel";
 import { calculateNotificationInterval } from "../service/helpers";
 
 const db = openDatabase();
-const lint = "";
-export default function ModalScreen(props) {
-  const [isLoading, setIsLoading] = useState(false);
+
+export default function ModalScreen() {
   const [info, setInfo] = useState<IPlant | null>(null);
   const navigation = useNavigation();
   const toast = useToast();
@@ -139,10 +127,6 @@ export default function ModalScreen(props) {
   const handleChange = (name, value) => {
     setInfo((prev) => ({ ...prev, [name]: value }));
   };
-
-  if (isLoading) {
-    return <Text style={styles.contentWrapper}>Loading...</Text>;
-  }
 
   return (
     <View style={styles.container}>
