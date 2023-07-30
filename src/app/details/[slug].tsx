@@ -18,6 +18,7 @@ function DetailsScreen() {
           [],
           (_, { rows }) => {
             console.log('rows', rows)
+
             setInfo(rows._array)
           }
         )
