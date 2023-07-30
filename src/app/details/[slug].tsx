@@ -1,14 +1,14 @@
-import { useLocalSearchParams } from "expo-router";
-import React, { useEffect } from "react";
-import { View, Text } from "react-native";
-import { openDatabase } from "../../service/sqlite";
-import { IPlant } from "../../models/plantsModel";
+import { useLocalSearchParams } from 'expo-router'
+import React, { useEffect } from 'react'
+import { View, Text } from 'react-native'
+import { openDatabase } from '../../service/sqlite'
+import { IPlant } from '../../models/plantsModel'
 
-const db = openDatabase();
+const db = openDatabase()
 function DetailsScreen() {
-  const { slug } = useLocalSearchParams();
+  const { slug } = useLocalSearchParams()
   // const [isLoading, setIsLoading] = React.useState(false);
-  const [info, setInfo] = React.useState<IPlant[]>();
+  const [info, setInfo] = React.useState<IPlant[]>()
 
   useEffect(() => {
     db.transaction(
@@ -17,17 +17,17 @@ function DetailsScreen() {
           `select * from plants where id=${slug}`,
           [],
           (_, { rows }) => {
-            console.log("rows", rows);
-            setInfo(rows._array);
+            console.log('rows', rows)
+            setInfo(rows._array)
           }
-        );
+        )
       },
       null,
       () => {
-        console.log("success");
+        console.log('success')
       }
-    );
-  }, [slug]);
+    )
+  }, [slug])
 
   return (
     <View>
@@ -35,7 +35,7 @@ function DetailsScreen() {
       <Text>{slug}</Text>
       <Text>{info?.[0]?.name}</Text>
     </View>
-  );
+  )
 }
 
-export default DetailsScreen;
+export default DetailsScreen
