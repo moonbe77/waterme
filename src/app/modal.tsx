@@ -42,16 +42,16 @@ export default function ModalScreen(props) {
     db.transaction(
       (tx) => {
         tx.executeSql(
-          `create table if not exists plants (id integer primary key not null, 
-            name text, 
-            type text, 
-            image text, 
-            notificationId text, 
-            lastWatered text, 
-            nextWatering text, 
-            lastFertilized text, 
+          `create table if not exists plants (id integer primary key not null,
+            name text,
+            type text,
+            image text,
+            notificationId text,
+            lastWatered text,
+            nextWatering text,
+            lastFertilized text,
             nextFertilizing text,
-            notificationTime text, 
+            notificationTime text,
             notes text)`
         );
       },
