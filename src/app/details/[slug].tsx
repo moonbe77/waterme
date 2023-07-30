@@ -17,7 +17,6 @@ function DetailsScreen() {
           `select * from plants where id=${slug}`,
           [],
           (_, { rows }) => {
-            console.log('rows', rows)
             setInfo(rows._array)
           }
         )

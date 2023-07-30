@@ -1,7 +1,7 @@
-import { StatusBar } from "expo-status-bar";
-import { Alert, Platform, StyleSheet } from "react-native";
-import { schedulePushNotification } from "../service/pushNotifications";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { StatusBar } from 'expo-status-bar'
+import { Alert, Platform, StyleSheet } from 'react-native'
+import { schedulePushNotification } from '../service/pushNotifications'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 import {
   Pressable,
   Input,
@@ -10,21 +10,21 @@ import {
   Text,
   Button,
   Heading,
-  useToast,
-} from "native-base";
-import { View } from "../components/Themed";
-import { useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
-import { openDatabase } from "../service/sqlite";
-import { IPlant } from "../models/plantsModel";
-import { calculateNotificationInterval } from "../service/helpers";
+  useToast
+} from 'native-base'
+import { View } from '../components/Themed'
+import { useNavigation } from 'expo-router'
+import { useEffect, useState } from 'react'
+import { openDatabase } from '../service/sqlite'
+import { IPlant } from '../models/plantsModel'
+import { calculateNotificationInterval } from '../service/helpers'
 
-const db = openDatabase();
+const db = openDatabase()
 
 export default function ModalScreen() {
-  const [info, setInfo] = useState<IPlant | null>(null);
-  const navigation = useNavigation();
-  const toast = useToast();
+  const [info, setInfo] = useState<IPlant | null>(null)
+  const navigation = useNavigation()
+  const toast = useToast()
 
   useEffect(() => {
     db.transaction(
@@ -41,36 +41,36 @@ export default function ModalScreen() {
             nextFertilizing text,
             notificationTime text,
             notes text)`
-        );
+        )
       },
       (error) => {
-        console.log("error creating table ", error);
+        console.log('error creating table ', error)
       },
       () => {
-        console.log("Table created successfully");
+        console.log('Table created successfully')
       }
-    );
-  }, []);
+    )
+  }, [])
 
   const dropDb = () => {
-    console.log("dropping db");
+    console.log('dropping db')
     db.transaction(
       (tx) => {
-        tx.executeSql("DROP TABLE IF EXISTS plants");
+        tx.executeSql('DROP TABLE IF EXISTS plants')
       },
       (error) => {
-        console.log("error", error);
+        console.log('error ERROR', error)
       },
       () => {
-        console.log("success");
+        console.log('success')
       }
-    );
-  };
+    )
+  }
 
   const addPlant = () => {
     if (!info?.name) {
-      Alert.alert("Please fill info");
-      return;
+      Alert.alert('Please fill info')
+      return
     }
 
     // if nextWatering is  set, set remainder to nextWatering
@@ -79,20 +79,20 @@ export default function ModalScreen() {
       const remainder = calculateNotificationInterval(
         Number(info.nextWatering),
         info.notificationTime
-      );
+      )
 
       schedulePushNotification({
         content: {
-          title: "Watering reminder",
+          title: 'Watering reminder',
           body: `Don't forget to water ${info.name}`,
-          data: { data: "goes here data prop", url: "/details/1" },
+          data: { data: 'goes here data prop', url: '/details/1' }
         },
-        trigger: { seconds: Number(remainder), repeats: true },
+        trigger: { seconds: Number(remainder), repeats: true }
       }).then((res) => {
         db.transaction(
           (tx) => {
             tx.executeSql(
-              "insert into plants (name, type, image, notificationId, nextWatering, nextFertilizing, notificationTime) values (?, ?, ?, ?,?,?,?)",
+              'insert into plants (name, type, image, notificationId, nextWatering, nextFertilizing, notificationTime) values (?, ?, ?, ?,?,?,?)',
               [
                 info.name,
                 info.type,
@@ -102,31 +102,31 @@ export default function ModalScreen() {
                 info.nextFertilizing,
                 info?.notificationTime
                   ? info.notificationTime.toISOString()
-                  : "",
+                  : ''
               ]
-            );
+            )
           },
           (error) => {
-            console.log("error", error);
+            console.log('error', error)
           },
           () => {
             toast.show({
-              title: "Remainder set successfully",
-              variant: "top-accent",
+              title: 'Remainder set successfully',
+              variant: 'top-accent',
               duration: 3000,
-              placement: "top",
-            });
+              placement: 'top'
+            })
             //close modal
-            navigation.goBack();
+            navigation.goBack()
           }
-        );
-      });
+        )
+      })
     }
-  };
+  }
 
   const handleChange = (name, value) => {
-    setInfo((prev) => ({ ...prev, [name]: value }));
-  };
+    setInfo((prev) => ({ ...prev, [name]: value }))
+  }
 
   return (
     <View style={styles.container}>
@@ -147,43 +147,43 @@ export default function ModalScreen() {
         >
           <Input
             id="name"
-            onChangeText={(value) => handleChange("name", value)}
+            onChangeText={(value) => handleChange('name', value)}
             placeholder="Name / Title"
             size="xl"
             isFullWidth={true}
-            color={"white"}
+            color={'white'}
           />
 
           <Input
             // w="1/2"
             id="waterInterval"
             inputMode="numeric"
-            onChangeText={(value) => handleChange("nextWatering", value)}
+            onChangeText={(value) => handleChange('nextWatering', value)}
             placeholder="Watering interval in days"
             size="xl"
-            color={"white"}
+            color={'white'}
           />
           <Input
             id="fertilizingInterval"
             // w="1/2"
             inputMode="numeric"
-            onChangeText={(value) => handleChange("nextFertilizing", value)}
+            onChangeText={(value) => handleChange('nextFertilizing', value)}
             placeholder="Next fertilizing interval in days"
             size="xl"
-            color={"white"}
+            color={'white'}
           />
 
           <Box w="full">
             <Text color="amber.100">Notification Time</Text>
             <RNDateTimePicker
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: 'white' }}
               themeVariant="light"
               display="spinner"
               mode="time"
               value={info?.notificationTime || new Date()}
               onChange={(event, selectedDate) => {
-                console.log({ event, selectedDate });
-                handleChange("notificationTime", selectedDate);
+                console.log({ event, selectedDate })
+                handleChange('notificationTime', selectedDate)
               }}
             />
           </Box>
@@ -197,31 +197,31 @@ export default function ModalScreen() {
           <Text>DROP TABLE DANGER</Text>
         </Pressable>
       </View>
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%'
   },
   line: {
-    borderColor: "#eee",
+    borderColor: '#eee',
     borderWidth: 1,
     marginVertical: 15,
     width: 60,
     height: 10,
-    marginLeft: "50%",
+    marginLeft: '50%',
     transform: [{ translateX: -30 }],
-    backgroundColor: "gray",
-    borderRadius: 10,
+    backgroundColor: 'gray',
+    borderRadius: 10
   },
   contentWrapper: {
-    backgroundColor: "#ff5",
+    backgroundColor: '#ff5',
     flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-});
+    width: '100%',
+    height: '100%'
+  }
+})
