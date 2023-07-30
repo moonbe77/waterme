@@ -36,7 +36,7 @@ function Feed(props) {
       null,
       () => {
         setIsLoading(false);
-      }
+      },
     );
   }, []);
 
@@ -56,7 +56,7 @@ function Feed(props) {
         console.log("success");
         setIsLoading(false);
         cancelAllScheduledNotifications();
-      }
+      },
     );
   };
 

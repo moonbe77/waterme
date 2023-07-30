@@ -16,7 +16,6 @@ export function openDatabase() {
   return db;
 }
 
-
 const createDb = `
 CREATE TABLE IF NOT EXISTS "plants" (
   "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -37,4 +36,4 @@ CREATE TABLE IF NOT EXISTS "plants" (
   "wateringNotificationId"	INTEGER NOT NULL,
   "fertilizerNotificationId"	INTEGER NOT NULL
 );
-)`
+)`;

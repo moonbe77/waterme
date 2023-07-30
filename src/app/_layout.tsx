@@ -50,7 +50,7 @@ export function RootLayoutNav() {
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
+      setExpoPushToken(token),
     );
 
     notificationListener.current =
@@ -65,7 +65,7 @@ export function RootLayoutNav() {
 
     return () => {
       Notifications.removeNotificationSubscription(
-        notificationListener.current
+        notificationListener.current,
       );
       Notifications.removeNotificationSubscription(responseListener.current);
     };

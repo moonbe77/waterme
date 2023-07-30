@@ -18,13 +18,13 @@ function index(props) {
           (_, { rows }) => {
             console.log("rows", rows);
             setInfo(rows._array);
-          }
+          },
         );
       },
       null,
       () => {
         console.log("success");
-      }
+      },
     );
   }, [slug]);
 

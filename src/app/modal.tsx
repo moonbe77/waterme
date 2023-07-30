@@ -52,7 +52,7 @@ export default function ModalScreen(props) {
             lastFertilized text,
             nextFertilizing text,
             notificationTime text,
-            notes text)`
+            notes text)`,
         );
       },
       (error) => {
@@ -60,7 +60,7 @@ export default function ModalScreen(props) {
       },
       () => {
         console.log("Table created successfully");
-      }
+      },
     );
   }, []);
 
@@ -75,7 +75,7 @@ export default function ModalScreen(props) {
       },
       () => {
         console.log("success");
-      }
+      },
     );
   };
 
@@ -90,7 +90,7 @@ export default function ModalScreen(props) {
       // convert interval in days to seconds
       const remainder = calculateNotificationInterval(
         Number(info.nextWatering),
-        info.notificationTime
+        info.notificationTime,
       );
 
       schedulePushNotification({
@@ -115,7 +115,7 @@ export default function ModalScreen(props) {
                 info?.notificationTime
                   ? info.notificationTime.toISOString()
                   : "",
-              ]
+              ],
             );
           },
           (error) => {
@@ -130,7 +130,7 @@ export default function ModalScreen(props) {
             });
             //close modal
             navigation.goBack();
-          }
+          },
         );
       });
     }

@@ -5,11 +5,11 @@ export interface IPlant {
   description: string;
   image: string;
   type: string;
-  notificationId: string
-  lastWatered: string
-  nextWatering: string
-  lastFertilized: string
-  nextFertilizing: string
-  notificationTime: Date
-  notes: string
+  notificationId: string;
+  lastWatered: string;
+  nextWatering: string;
+  lastFertilized: string;
+  nextFertilizing: string;
+  notificationTime: Date;
+  notes: string;
 }
