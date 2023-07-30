@@ -4,7 +4,7 @@ import { View, Text } from "react-native";
 import { openDatabase } from "../../service/sqlite";
 
 const db = openDatabase();
-function index(props) {
+function DetailsScreen(props) {
   const { slug } = useLocalSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
   const [info, setInfo] = React.useState<any[]>();
@@ -18,13 +18,13 @@ function index(props) {
           (_, { rows }) => {
             console.log("rows", rows);
             setInfo(rows._array);
-          },
+          }
         );
       },
       null,
       () => {
         console.log("success");
-      },
+      }
     );
   }, [slug]);
 
@@ -37,4 +37,4 @@ function index(props) {
   );
 }
 
-export default index;
+export default DetailsScreen;
