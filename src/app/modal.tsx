@@ -53,7 +53,7 @@ export default function ModalScreen() {
   }, [])
 
   const dropDb = () => {
-    console.log('dropping db')
+    console.log('dropping db test')
     db.transaction(
       (tx) => {
         tx.executeSql('DROP TABLE IF EXISTS plants')
