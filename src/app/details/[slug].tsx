@@ -9,6 +9,7 @@ function DetailsScreen() {
   const { slug } = useLocalSearchParams()
   // const [isLoading, setIsLoading] = React.useState(false);
   const [info, setInfo] = React.useState<IPlant[]>()
+  const test = ''
 
   useEffect(() => {
     db.transaction(
