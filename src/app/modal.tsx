@@ -10,7 +10,7 @@ import {
   Text,
   Button,
   Heading,
-  useToast
+  useToast,
 } from 'native-base'
 import { View } from '../components/Themed'
 import { useNavigation } from 'expo-router'
@@ -30,7 +30,8 @@ export default function ModalScreen() {
     db.transaction(
       (tx) => {
         tx.executeSql(
-          `create table if not exists plants (id integer primary key not null,
+          `create table if not exists plants (
+            id integer primary key not null,
             name text,
             type text,
             image text,
@@ -40,7 +41,11 @@ export default function ModalScreen() {
             lastFertilized text,
             nextFertilizing text,
             notificationTime text,
-            notes text)`
+            createdOn date,
+            createdBy text,
+            editedOn date,
+            editedBy text,
+            notes text)`,
         )
       },
       (error) => {
@@ -48,12 +53,11 @@ export default function ModalScreen() {
       },
       () => {
         console.log('Table created successfully')
-      }
+      },
     )
   }, [])
 
   const dropDb = () => {
-    console.log('dropping db test')
     db.transaction(
       (tx) => {
         tx.executeSql('DROP TABLE IF EXISTS plants')
@@ -63,7 +67,7 @@ export default function ModalScreen() {
       },
       () => {
         console.log('success')
-      }
+      },
     )
   }
 
@@ -78,21 +82,21 @@ export default function ModalScreen() {
       // convert interval in days to seconds
       const remainder = calculateNotificationInterval(
         Number(info.nextWatering),
-        info.notificationTime
+        info.notificationTime,
       )
 
       schedulePushNotification({
         content: {
           title: 'Watering reminder',
           body: `Don't forget to water ${info.name}`,
-          data: { data: 'goes here data prop', url: '/details/1' }
+          data: { data: 'goes here data prop', url: '/details/1' },
         },
-        trigger: { seconds: Number(remainder), repeats: true }
+        trigger: { seconds: Number(remainder), repeats: true },
       }).then((res) => {
         db.transaction(
           (tx) => {
             tx.executeSql(
-              'insert into plants (name, type, image, notificationId, nextWatering, nextFertilizing, notificationTime) values (?, ?, ?, ?,?,?,?)',
+              'insert into plants (name, type, image, notificationId, nextWatering, nextFertilizing, notificationTime, createdOn) values (?, ?, ?, ?,?,?,?,?)',
               [
                 info.name,
                 info.type,
@@ -102,23 +106,25 @@ export default function ModalScreen() {
                 info.nextFertilizing,
                 info?.notificationTime
                   ? info.notificationTime.toISOString()
-                  : ''
-              ]
+                  : '',
+                new Date().toISOString(),
+              ],
             )
           },
           (error) => {
             console.log('error', error)
+            Alert.alert('Error', 'Error adding plant')
           },
           () => {
             toast.show({
-              title: 'Remainder set successfully',
+              title: 'Remainder successfully set',
               variant: 'top-accent',
               duration: 3000,
-              placement: 'top'
+              placement: 'top',
             })
             //close modal
             navigation.goBack()
-          }
+          },
         )
       })
     }
@@ -148,6 +154,7 @@ export default function ModalScreen() {
           <Input
             id="name"
             onChangeText={(value) => handleChange('name', value)}
+            value="berny test 6pm"
             placeholder="Name / Title"
             size="xl"
             isFullWidth={true}
@@ -158,6 +165,7 @@ export default function ModalScreen() {
             // w="1/2"
             id="waterInterval"
             inputMode="numeric"
+            value="1"
             onChangeText={(value) => handleChange('nextWatering', value)}
             placeholder="Watering interval in days"
             size="xl"
@@ -192,10 +200,10 @@ export default function ModalScreen() {
               Set Reminder
             </Button>
           </Box>
+          <Pressable onPress={dropDb}>
+            <Text color={'red.100'}>DROP TABLE DANGER</Text>
+          </Pressable>
         </VStack>
-        <Pressable onPress={dropDb}>
-          <Text>DROP TABLE DANGER</Text>
-        </Pressable>
       </View>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
@@ -205,7 +213,7 @@ export default function ModalScreen() {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   line: {
     borderColor: '#eee',
@@ -216,12 +224,12 @@ const styles = StyleSheet.create({
     marginLeft: '50%',
     transform: [{ translateX: -30 }],
     backgroundColor: 'gray',
-    borderRadius: 10
+    borderRadius: 10,
   },
   contentWrapper: {
     backgroundColor: '#ff5',
     flex: 1,
     width: '100%',
-    height: '100%'
-  }
+    height: '100%',
+  },
 })

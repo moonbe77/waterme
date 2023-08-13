@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#256235"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -30,7 +32,10 @@
       }
     },
     "owner": "moonbe77",
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      "expo-build-properties"
+    ],
     "scheme": "waterme",
     "experiments": {
       "typedRoutes": true

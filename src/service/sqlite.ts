@@ -1,5 +1,4 @@
-import * as SQLite from "expo-sqlite";
-import { Platform } from "react-native";
+import * as SQLite from 'expo-sqlite'
 
 export function openDatabase() {
   // if (Platform.OS === "ios") {
@@ -12,8 +11,29 @@ export function openDatabase() {
   //   };
   // }
 
-  const db = SQLite.openDatabase("plants.db");
-  return db;
+  const db = SQLite.openDatabase('plants.db')
+  return db
+}
+
+// funct to check if db exists
+export const checkDb = `
+SELECT name FROM sqlite_master WHERE type='table' AND name='plants';
+`
+
+export const logSqlQuery = (sql: string, args: any[]) => {
+  openDatabase().transaction((tx) => {
+    tx.executeSql(
+      sql,
+      [sql, JSON.stringify(args)],
+      (_, { rows }) => {
+        console.log('SQL Query: ', rows)
+      },
+      (_, error) => {
+        console.log('SQL Error: ', error)
+        return false
+      },
+    )
+  })
 }
 
 const createDb = `
@@ -36,4 +56,4 @@ CREATE TABLE IF NOT EXISTS "plants" (
   "wateringNotificationId"	INTEGER NOT NULL,
   "fertilizerNotificationId"	INTEGER NOT NULL
 );
-)`;
+)`
