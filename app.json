@@ -11,11 +11,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#256235"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bmunz.waterme"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,10 +31,7 @@
       }
     },
     "owner": "moonbe77",
-    "plugins": [
-      "expo-router",
-      "expo-build-properties"
-    ],
+    "plugins": ["expo-router", "expo-build-properties"],
     "scheme": "waterme",
     "experiments": {
       "typedRoutes": true

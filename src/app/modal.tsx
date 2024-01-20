@@ -154,7 +154,7 @@ export default function ModalScreen() {
           <Input
             id="name"
             onChangeText={(value) => handleChange('name', value)}
-            value="berny test 6pm"
+            value={info?.name || ''}
             placeholder="Name / Title"
             size="xl"
             isFullWidth={true}
@@ -165,7 +165,7 @@ export default function ModalScreen() {
             // w="1/2"
             id="waterInterval"
             inputMode="numeric"
-            value="1"
+            value={info?.nextWatering || ''}
             onChangeText={(value) => handleChange('nextWatering', value)}
             placeholder="Watering interval in days"
             size="xl"
@@ -174,6 +174,7 @@ export default function ModalScreen() {
           <Input
             id="fertilizingInterval"
             // w="1/2"
+            value={info?.nextFertilizing || ''}
             inputMode="numeric"
             onChangeText={(value) => handleChange('nextFertilizing', value)}
             placeholder="Next fertilizing interval in days"
