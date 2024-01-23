@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { View, Text, StyleSheet, Pressable, FlatList } from 'react-native'
+import { View, StyleSheet, Pressable, FlatList } from 'react-native'
 
 import { colors } from '../../theme/colors'
 import { Link, useNavigation, useFocusEffect, useRouter } from 'expo-router'
@@ -7,6 +7,7 @@ import { openDatabase } from '../../service/sqlite'
 import { IPlant } from '../../models/plantsModel'
 
 import { deleteAll, getPlants } from '../../service/db_services'
+import { Box, Text, VStack, Heading } from '@gluestack-ui/themed'
 
 const db = openDatabase()
 function Feed(props) {
@@ -73,31 +74,41 @@ function Feed(props) {
 export default Feed
 
 const Item = ({ item }: { item: IPlant }) => (
-  <View style={styles.card} key={item.id}>
-    <Link href={`/details/${item.id}`} style={styles.link}>
+  <Box
+    maxWidth="$full"
+    maxHeight={200}
+    borderColor="$borderLight300"
+    borderRadius="$lg"
+    borderWidth="$1"
+    my="$4"
+    p="$4"
+    overflow="hidden"
+    $light-bg="white"
+    $base-mx="$5"
+    $dark-bg="$backgroundDark800"
+    $dark-borderColor="$borderDark800"
+    key={item.id}
+  >
+    <Link href={`/details/${item.id}`}>
       {/* <Image source={item.image} style={styles.image} contentFit="cover" /> */}
-      <View style={styles.cardContent}>
-        <View style={styles.titleWrapper}>
-          <Text style={styles.title}>{item.name}</Text>
-          <Text style={styles.createdOn}>
+      <Box>
+        <View>
+          <Heading>{item.name}</Heading>
+          <Text>
             {`${getFormattedDate(item.createdOn)} - ${getFormattedTime(
               item.createdOn,
             )}`}
           </Text>
         </View>
-        <View>
-          <Text style={styles.type}>
-            Next Fertilizing: {item.nextFertilizing}
-          </Text>
-          <Text style={styles.type}>Next watering: {item.nextWatering}</Text>
-          <Text style={styles.type}>NotificationId: {item.notificationId}</Text>
-          <Text style={styles.type}>
-            notif time: {item.notificationTime.toString()}
-          </Text>
-        </View>
-      </View>
+        <VStack px="$2" pt="$2" pb="$2">
+          <Text>Next Fertilizing: {item.nextFertilizing}</Text>
+          <Text>Next watering: {item.nextWatering}</Text>
+          <Text>NotificationId: {item.notificationId}</Text>
+          <Text>notif time: {item.notificationTime.toString()}</Text>
+        </VStack>
+      </Box>
     </Link>
-  </View>
+  </Box>
 )
 
 const getFormattedDate = (value: Date) => {
