@@ -5,7 +5,7 @@ import { colors } from '../../theme/colors'
 import { Link, useNavigation, useFocusEffect, useRouter } from 'expo-router'
 import { openDatabase } from '../../service/sqlite'
 import { IPlant } from '../../models/plantsModel'
-import { background } from 'native-base/lib/typescript/theme/styled-system'
+
 import { deleteAll, getPlants } from '../../service/db_services'
 
 const db = openDatabase()

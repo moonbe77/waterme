@@ -1,7 +1,8 @@
-import { Button, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { getAllScheduledNotificationsAsync } from 'expo-notifications'
 
-import { Text, View } from '../../components/Themed'
+import { View } from '../../components/Themed'
+import { Text, Button, ButtonText, Box } from '@gluestack-ui/themed'
 import { useEffect } from 'react'
 import { openDatabase } from '../../service/sqlite'
 
@@ -42,9 +43,29 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Button onPress={getNotifications} title="log NOTIFICATION" />
-      <Button onPress={checkDb} title="check db" />
+      <Box bg="$primary500" p="$10" borderRadius={15}>
+        <Text style={styles.title}>Home</Text>
+        <Button
+          onPress={getNotifications}
+          size="md"
+          variant="solid"
+          action="primary"
+          isDisabled={false}
+          isFocusVisible={false}
+        >
+          <ButtonText> log NOTIFICATION</ButtonText>
+        </Button>
+        <Button
+          onPress={checkDb}
+          size="md"
+          variant="outline"
+          action="positive"
+          isDisabled={false}
+          isFocusVisible={false}
+        >
+          <ButtonText>lo g DB</ButtonText>
+        </Button>
+      </Box>
       <View
         style={styles.separator}
         lightColor="#eee"

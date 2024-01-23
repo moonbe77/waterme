@@ -11,7 +11,9 @@ import {
   Button,
   Heading,
   useToast,
-} from 'native-base'
+  ButtonText,
+  InputField,
+} from '@gluestack-ui/themed'
 import { View } from '../components/Themed'
 import { useNavigation } from 'expo-router'
 import { useEffect, useState } from 'react'
@@ -142,47 +144,55 @@ export default function ModalScreen() {
           <Heading size="xl">Set New Remainder</Heading>
         </Box>
         <VStack
-          space={4}
-          overflow="hidden"
-          borderColor="coolGray.400"
-          background="gray.700"
-          h="full"
-          w="full"
-          p={4}
-          alignItems="center"
+          space="md"
+          // overflow="hidden"
+          // borderColor="$amber700"
+          // background="gray.700"
+          // h="full"
+          // w="full"
+          px="$10"
+          // alignItems="center"
         >
-          <Input
-            id="name"
-            onChangeText={(value) => handleChange('name', value)}
-            value={info?.name || ''}
-            placeholder="Name / Title"
-            size="xl"
-            isFullWidth={true}
-            color={'white'}
-          />
+          <Box>
+            <Input
+              id="name"
+              size="md"
+              isFullWidth={true}
+              // color={'white'}
+            >
+              <InputField
+                placeholder="Name / Title"
+                onChangeText={(value) => handleChange('name', value)}
+                value={info?.name || ''}
+              />
+            </Input>
+          </Box>
+          <Box>
+            <Input
+              // w="1/2"
+              id="waterInterval"
+              size="md"
+            >
+              <InputField
+                placeholder="Watering interval in days"
+                type="text"
+                inputMode="numeric"
+                value={info?.nextWatering || ''}
+                onChangeText={(value) => handleChange('nextWatering', value)}
+              />
+            </Input>
+          </Box>
+          <Box>
+            <Input id="fertilizingInterval" size="md">
+              <InputField
+                placeholder="Fertilizing interval in days"
+                onChangeText={(value) => handleChange('nextFertilizing', value)}
+                inputMode="numeric"
+              />
+            </Input>
+          </Box>
 
-          <Input
-            // w="1/2"
-            id="waterInterval"
-            inputMode="numeric"
-            value={info?.nextWatering || ''}
-            onChangeText={(value) => handleChange('nextWatering', value)}
-            placeholder="Watering interval in days"
-            size="xl"
-            color={'white'}
-          />
-          <Input
-            id="fertilizingInterval"
-            // w="1/2"
-            value={info?.nextFertilizing || ''}
-            inputMode="numeric"
-            onChangeText={(value) => handleChange('nextFertilizing', value)}
-            placeholder="Next fertilizing interval in days"
-            size="xl"
-            color={'white'}
-          />
-
-          <Box w="full">
+          <Box>
             <Text color="amber.100">Notification Time</Text>
             <RNDateTimePicker
               style={{ backgroundColor: 'white' }}
@@ -198,7 +208,7 @@ export default function ModalScreen() {
           </Box>
           <Box alignItems="center">
             <Button onPress={addPlant} size="lg">
-              Set Reminder
+              <ButtonText>Set Reminder</ButtonText>
             </Button>
           </Box>
           <Pressable onPress={dropDb}>
