@@ -119,10 +119,13 @@ export default function ModalScreen() {
           },
           () => {
             toast.show({
-              title: 'Remainder successfully set',
-              variant: 'top-accent',
               duration: 3000,
               placement: 'top',
+              render: () => (
+                <Box bg="$primary500" p="$10" borderRadius={15}>
+                  <Text>Remainder successfully set</Text>
+                </Box>
+              ),
             })
             //close modal
             navigation.goBack()

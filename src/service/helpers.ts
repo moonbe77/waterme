@@ -36,6 +36,7 @@ export function calculateNotificationInterval(
   // Step 2: Add "intervalDays" Days to the Current Date
   const futureDate = new Date(currentDate)
   futureDate.setDate(currentDate.getDate() + intervalDays)
+  console.log('calculateNotificationInterval', { futureDate })
 
   // Step 3: Set the Notification Time
   const hours = notificationTime.getHours()

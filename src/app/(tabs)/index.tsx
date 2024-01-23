@@ -3,7 +3,7 @@ import { getAllScheduledNotificationsAsync } from 'expo-notifications'
 
 import { View } from '../../components/Themed'
 import { Text, Button, ButtonText, Box } from '@gluestack-ui/themed'
-import { useEffect } from 'react'
+
 import { openDatabase } from '../../service/sqlite'
 
 const db = openDatabase()
