@@ -10,6 +10,7 @@ import { useNotificationObserver } from '../hooks/useNotificationObserver'
 import { Platform } from 'react-native'
 import { GluestackUIProvider } from '@gluestack-ui/themed'
 import { config } from '@gluestack-ui/config'
+import { useLoadAssets } from '../hooks/use-load-assets'
 export { ErrorBoundary } from 'expo-router'
 
 Notifications.setNotificationHandler({
@@ -37,6 +38,8 @@ export default function RootLayout() {
 }
 
 export function RootLayoutNav() {
+  const { isLoaded } = useLoadAssets()
+
   const [expoPushToken, setExpoPushToken] = useState('')
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
@@ -45,29 +48,27 @@ export function RootLayoutNav() {
   const responseListener = useRef<Notifications.Subscription | undefined>()
   useNotificationObserver()
 
-  console.log('Device ', {
-    expoPushToken,
-    notification,
-  })
+  if (!isLoaded) return null
+  // useEffect(() => {
+  //   registerForPushNotificationsAsync().then((token) => setExpoPushToken(token))
 
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token))
+  //   notificationListener.current =
+  //     Notifications.addNotificationReceivedListener((notification) => {
+  //       setNotification(notification)
+  //     })
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification)
-      })
+  //   responseListener.current =
+  //     Notifications.addNotificationResponseReceivedListener((response) => {
+  //       console.log(response)
+  //     })
 
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response)
-      })
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current)
-      Notifications.removeNotificationSubscription(responseListener.current)
-    }
-  }, [])
+  //   return () => {
+  //     Notifications.removeNotificationSubscription(
+  //       notificationListener?.current,
+  //     )
+  //     Notifications.removeNotificationSubscription(responseListener?.current)
+  //   }
+  // }, [])
 
   return (
     // <NativeBaseProvider>
