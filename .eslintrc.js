@@ -17,8 +17,14 @@ module.exports = {
       env: {
         node: true,
       },
-      files: [".eslintrc.{js,cjs}"],
-      parserOptions: {
+      files: [
+				".eslintrc.{js,cjs}", 
+				"babel.config.{js,cjs}", 
+				"metro.config.{js,cjs}", 
+				"jest.config.{js,cjs}",
+				"webpack.config.{js,cjs}"
+			],
+      parserOptions: {				
         sourceType: "script",
         ecmaFeatures: {
           jsx: true
@@ -35,5 +41,7 @@ module.exports = {
   rules: {
     'no-unused-vars': 'warn',
     'no-console': 'warn',
+		"no-var-requires": "off",
+		"@typescript-eslint/no-var-requires": "off"
   },
 };

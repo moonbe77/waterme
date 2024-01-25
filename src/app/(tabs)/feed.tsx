@@ -4,52 +4,53 @@ import { View, StyleSheet, Pressable, FlatList } from 'react-native'
 import { colors } from '../../theme/colors'
 import { Link, useNavigation, useFocusEffect, useRouter } from 'expo-router'
 import { openDatabase } from '../../service/sqlite'
-import { IPlant } from '../../models/plantsModel'
+import type { IPlant } from '../../models/plantsModel'
 
 import { deleteAll, getPlants } from '../../service/db_services'
 import { Box, Text, VStack, Heading } from '@gluestack-ui/themed'
 
-const db = openDatabase()
-function Feed(props) {
-  const router = useRouter()
-  const navigation = useNavigation()
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [info, setInfo] = React.useState<IPlant[]>([])
+// const db = openDatabase()
 
-  // const getData = useCallback(() => {
-  //   setIsLoading(true)
-  //   db.transaction(
-  //     (tx) => {
-  //       tx.executeSql(`select * from plants`, [], (_, { rows }) => {
-  //         console.log('rows ', rows)
-  //         setInfo(rows._array)
-  //       })
-  //     },
-  //     null,
-  //     () => {
-  //       setIsLoading(false)
-  //     },
-  //   )
-  // }, [])
+function Feed() {
+  // const router = useRouter()
+  // const navigation = useNavigation()
+  // const [isLoading, setIsLoading] = React.useState(false)
+  // const [info, setInfo] = React.useState<IPlant[]>([])
 
-  const useData = (rows) => {
-    console.log('rows ', rows)
-    setInfo(rows)
-    setIsLoading(false)
-  }
-  const error = (error) => {
-    console.log('error ', error)
-  }
-  const success = () => {
-    console.log('success')
-    setIsLoading(false)
-  }
+  // // const getData = useCallback(() => {
+  // //   setIsLoading(true)
+  // //   db.transaction(
+  // //     (tx) => {
+  // //       tx.executeSql(`select * from plants`, [], (_, { rows }) => {
+  // //         console.log('rows ', rows)
+  // //         setInfo(rows._array)
+  // //       })
+  // //     },
+  // //     null,
+  // //     () => {
+  // //       setIsLoading(false)
+  // //     },
+  // //   )
+  // // }, [])
 
-  useFocusEffect(
-    useCallback(() => {
-      getPlants(useData, error, success)
-    }, []),
-  )
+  // const useData = (rows) => {
+  //   console.log('rows ', rows)
+  //   setInfo(rows)
+  //   setIsLoading(false)
+  // }
+  // const error = (error) => {
+  //   console.log('error ', error)
+  // }
+  // const success = () => {
+  //   console.log('success')
+  //   setIsLoading(false)
+  // }
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getPlants(useData, error, success)
+  //   }, []),
+  // )
 
   return (
     <View style={styles.container}>
@@ -58,7 +59,7 @@ function Feed(props) {
           <Text>Delete all</Text>
         </Pressable>
       </View>
-      <FlatList
+      {/* <FlatList
         data={info}
         renderItem={({ item }) => <Item item={item} />}
         keyExtractor={(item) => `${item.id}`}
@@ -66,7 +67,7 @@ function Feed(props) {
         onRefresh={() => {
           getPlants(useData, error, success)
         }}
-      />
+      /> */}
     </View>
   )
 }
