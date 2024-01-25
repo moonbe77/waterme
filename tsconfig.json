@@ -1,5 +1,11 @@
 {
-  "compilerOptions": {},
-  "extends": "expo/tsconfig.base",
+	"extends": "expo/tsconfig.base",
+  "compilerOptions": {
+		"strict": true,
+		"verbatimModuleSyntax": true,
+		"paths": {
+			"@/*": ["./*"]
+		}
+	},
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

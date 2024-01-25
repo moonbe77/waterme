@@ -41,6 +41,10 @@ export default function TabOneScreen() {
     )
   }
 
+  const testeDrizzle = () => {
+    console.log('testeDrizzle')
+  }
+
   return (
     <View style={styles.container}>
       <Box bg="$primary500" p="$10" borderRadius={15}>
@@ -64,6 +68,16 @@ export default function TabOneScreen() {
           isFocusVisible={false}
         >
           <ButtonText>lo g DB</ButtonText>
+        </Button>
+        <Button
+          onPress={testeDrizzle}
+          size="md"
+          variant="outline"
+          // action="info"
+          isDisabled={false}
+          isFocusVisible={false}
+        >
+          <ButtonText>Drizzle</ButtonText>
         </Button>
       </Box>
       <View
