@@ -78,8 +78,13 @@ export default function ModalScreen() {
   const addPlant = () => {
     add.onChangeName(info?.name || '')
     add.onChangeDescription(info?.description || '')
+    add.onChangeNextWatering(info?.nextWatering || '')
+    add.onChangeNextFertilizing(info?.nextFertilizing || '')
+    add.onChangeNotificationTime(info?.notificationTime || new Date())
+
     // create unique id
     const id = Math.random().toString(36).substr(2, 9)
+
     add.savePlant(id)
     //   if (!info?.name) {
     //     Alert.alert('Please fill info')

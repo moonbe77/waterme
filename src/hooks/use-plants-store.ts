@@ -1,6 +1,6 @@
 import { db } from '@/db/client'
 import { plants, type SelectPlants } from '@/db/schema'
-import { desc, eq } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import { create } from 'zustand'
 
 type SearchStore = {
@@ -57,10 +57,16 @@ type EditPlantStore = {
     plantName: string
     nextWatering: string
     nextFertilizing: string
+    notificationTime: Date
   }
   actions: {
     onChangeName: (name: string) => void
     onChangeDescription: (body: string) => void
+    onChangeType: (type: string) => void
+    onChangePlantName: (plantName: string) => void
+    onChangeNextWatering: (nextWatering: string) => void
+    onChangeNextFertilizing: (nextFertilizing: string) => void
+    onChangeNotificationTime: (notificationTime: Date) => void
     savePlant: (id: string) => void
     // deleteNote: (id: string) => void
   }
@@ -74,12 +80,23 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
     plantName: '',
     nextWatering: '',
     nextFertilizing: '',
+    notificationTime: new Date(),
   },
   actions: {
     onChangeName: (name) =>
       set((state) => ({ plant: { ...state.plant, name } })),
     onChangeDescription: (body) =>
       set((state) => ({ plant: { ...state.plant, body } })),
+    onChangeType: (type) =>
+      set((state) => ({ plant: { ...state.plant, type } })),
+    onChangePlantName: (plantName) =>
+      set((state) => ({ plant: { ...state.plant, plantName } })),
+    onChangeNextWatering: (nextWatering) =>
+      set((state) => ({ plant: { ...state.plant, nextWatering } })),
+    onChangeNextFertilizing: (nextFertilizing) =>
+      set((state) => ({ plant: { ...state.plant, nextFertilizing } })),
+    onChangeNotificationTime: (notificationTime) =>
+      set((state) => ({ plant: { ...state.plant, notificationTime } })),
 
     savePlant: (id) => {
       const {
@@ -89,6 +106,7 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
         plantName,
         nextWatering,
         nextFertilizing,
+        notificationTime,
       } = get().plant
       if (!name) return
       db.insert(plants)
@@ -100,6 +118,7 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           plantName,
           nextWatering,
           nextFertilizing,
+          notificationTime: notificationTime.toISOString(),
         })
         .onConflictDoUpdate({
           target: plants.id,
@@ -114,6 +133,7 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           plantName: '',
           nextWatering: new Date().toISOString(),
           nextFertilizing: new Date().toISOString(),
+          notificationTime: new Date(),
         },
       })
       usePlantsStore.getState().actions.refetch()

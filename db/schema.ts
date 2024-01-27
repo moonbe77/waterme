@@ -20,6 +20,7 @@ export const plants = sqliteTable('plants', {
   lastWatering: text('last_watering'),
   nextFertilizing: text('next_fertilizing'),
   lastFertilizing: text('last_fertilizing'),
+  notificationTime: text('notification_time'),
   type: text('type'),
   plantName: text('plant_name'),
   createdAt: text('created_at')
