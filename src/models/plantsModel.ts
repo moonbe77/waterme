@@ -1,3 +1,10 @@
+interface DbMeta {
+  createdOn: Date
+  createdBy: string
+  editedOn: Date
+  editedBy: string
+}
+
 export interface IPlant {
   id: number
   title: string
@@ -12,8 +19,4 @@ export interface IPlant {
   nextFertilizing: string
   notificationTime: Date
   notes: string
-  createdOn: Date
-  createdBy: string
-  editedOn: Date
-  editedBy: string
 }

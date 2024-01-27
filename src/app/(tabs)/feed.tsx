@@ -1,21 +1,39 @@
-import React, { useCallback } from 'react'
-import { View, StyleSheet, Pressable, FlatList } from 'react-native'
-
+import { View, StyleSheet, FlatList } from 'react-native'
 import { colors } from '../../theme/colors'
 import { Link, useNavigation, useFocusEffect, useRouter } from 'expo-router'
-import { openDatabase } from '../../service/sqlite'
-import type { IPlant } from '../../models/plantsModel'
 
-import { deleteAll, getPlants } from '../../service/db_services'
 import { Box, Text, VStack, Heading } from '@gluestack-ui/themed'
+import { usePlants, usePlantsActions } from '@/src/hooks/use-plants-store'
+import type { SelectPlants } from '@/db/schema'
 
-// const db = openDatabase()
+import tz from 'moment-timezone'
+import { duration } from 'moment'
+
+const zone = 'Australia/Sydney'
+
+function formatDate(date: string) {
+  //convert date to locale
+  const localDate = new Date(date)
+  const local = tz(date).tz(zone).format('YYYY-MM-DD  hh:mm:ssA z')
+
+  console.log('localDate ', {
+    date,
+    localDate,
+    local,
+  })
+
+  return `created ${duration(date)} ago`
+}
 
 function Feed() {
   // const router = useRouter()
   // const navigation = useNavigation()
   // const [isLoading, setIsLoading] = React.useState(false)
   // const [info, setInfo] = React.useState<IPlant[]>([])
+  const plants = usePlants()
+  const actions = usePlantsActions()
+
+  console.log('plants ', plants)
 
   // // const getData = useCallback(() => {
   // //   setIsLoading(true)
@@ -54,27 +72,22 @@ function Feed() {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Pressable onPress={deleteAll}>
-          <Text>Delete all</Text>
-        </Pressable>
-      </View>
-      {/* <FlatList
-        data={info}
+      <FlatList
+        data={plants}
         renderItem={({ item }) => <Item item={item} />}
         keyExtractor={(item) => `${item.id}`}
-        refreshing={isLoading}
-        onRefresh={() => {
-          getPlants(useData, error, success)
-        }}
-      /> */}
+        //  refreshing={isLoading}
+        // onRefresh={() => {
+        //   actions.refetch()
+        // }}
+      />
     </View>
   )
 }
 
 export default Feed
 
-const Item = ({ item }: { item: IPlant }) => (
+const Item = ({ item }: { item: SelectPlants }) => (
   <Box
     maxWidth="$full"
     maxHeight={200}
@@ -95,17 +108,13 @@ const Item = ({ item }: { item: IPlant }) => (
       <Box>
         <View>
           <Heading>{item.name}</Heading>
-          <Text>
-            {`${getFormattedDate(item.createdOn)} - ${getFormattedTime(
-              item.createdOn,
-            )}`}
-          </Text>
+          <Text>{formatDate(item.createdAt)}</Text>
         </View>
         <VStack px="$2" pt="$2" pb="$2">
           <Text>Next Fertilizing: {item.nextFertilizing}</Text>
           <Text>Next watering: {item.nextWatering}</Text>
-          <Text>NotificationId: {item.notificationId}</Text>
-          <Text>notif time: {item.notificationTime.toString()}</Text>
+          <Text>NotificationId: {item.id}</Text>
+          {/* <Text>notif time: {item.notificationTime.toString()}</Text> */}
         </VStack>
       </Box>
     </Link>
@@ -172,26 +181,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 })
-
-//list of plants
-const data = [
-  {
-    id: 1,
-    name: 'Plant 1',
-    type: 'type 1',
-    image:
-      'https://images.unsplash.com/photo-1597305877032-0668b3c6413a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget velit vitae libero sodales aliquet. Sed euismod, nisl quis aliquam ultricies, nisl nisl aliquam nisl, vitae aliquam nisl nisl vitae nisl. Sed euismod, nisl quis aliquam ultricies, nisl nisl aliquam nisl, vitae aliquam nisl nisl vitae nisl.',
-    timer: new Date(),
-  },
-  {
-    id: 2,
-    name: 'Plant 2',
-    type: 'type 2',
-    image:
-      'https://images.unsplash.com/photo-1555037015-1498966bcd7c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
-    description: 'test',
-    timer: new Date(),
-  },
-]

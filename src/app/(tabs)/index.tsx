@@ -1,14 +1,18 @@
 import { StyleSheet } from 'react-native'
 import { getAllScheduledNotificationsAsync } from 'expo-notifications'
-
 import { View } from '../../components/Themed'
 import { Text, Button, ButtonText, Box } from '@gluestack-ui/themed'
 
 import { openDatabase } from '../../service/sqlite'
+import { useNotes } from '@/src/hooks/use-notes-store'
 
 const db = openDatabase()
 
 export default function TabOneScreen() {
+  const notes = useNotes()
+
+  console.log('notes ', notes)
+
   const getNotifications = () => {
     getAllScheduledNotificationsAsync().then((res) => {
       console.log('getAllScheduledNotificationsAsync ', res)

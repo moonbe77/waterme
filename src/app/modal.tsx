@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react'
 import { openDatabase } from '../service/sqlite'
 import type { IPlant } from '../models/plantsModel'
 import { calculateNotificationInterval } from '../service/helpers'
+import { useEditPlantActions } from '../hooks/use-plants-store'
 
 const db = openDatabase()
 
@@ -27,6 +28,7 @@ export default function ModalScreen() {
   const [info, setInfo] = useState<Partial<IPlant> | null>(null)
   const navigation = useNavigation()
   const toast = useToast()
+  const add = useEditPlantActions()
 
   // useEffect(() => {
   //   db.transaction(
@@ -74,6 +76,11 @@ export default function ModalScreen() {
   // }
 
   const addPlant = () => {
+    add.onChangeName(info?.name || '')
+    add.onChangeDescription(info?.description || '')
+    // create unique id
+    const id = Math.random().toString(36).substr(2, 9)
+    add.savePlant(id)
     //   if (!info?.name) {
     //     Alert.alert('Please fill info')
     //     return
@@ -166,6 +173,20 @@ export default function ModalScreen() {
                 placeholder="Name / Title"
                 onChangeText={(value) => handleChange('name', value)}
                 value={info?.name || ''}
+              />
+            </Input>
+          </Box>
+          <Box>
+            <Input
+              id="description"
+              size="md"
+              isFullWidth={true}
+              // color={'white'}
+            >
+              <InputField
+                placeholder="Description"
+                onChangeText={(value) => handleChange('description', value)}
+                value={info?.description || ''}
               />
             </Input>
           </Box>
