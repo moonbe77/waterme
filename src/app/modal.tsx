@@ -30,51 +30,6 @@ export default function ModalScreen() {
   const toast = useToast()
   const add = useEditPlantActions()
 
-  // useEffect(() => {
-  //   db.transaction(
-  //     (tx) => {
-  //       tx.executeSql(
-  //         `create table if not exists plants (
-  //           id integer primary key not null,
-  //           name text,
-  //           type text,
-  //           image text,
-  //           notificationId text,
-  //           lastWatered text,
-  //           nextWatering text,
-  //           lastFertilized text,
-  //           nextFertilizing text,
-  //           notificationTime text,
-  //           createdOn date,
-  //           createdBy text,
-  //           editedOn date,
-  //           editedBy text,
-  //           notes text)`,
-  //       )
-  //     },
-  //     (error) => {
-  //       console.log('error creating table ', error)
-  //     },
-  //     () => {
-  //       console.log('Table created successfully')
-  //     },
-  //   )
-  // }, [])
-
-  // const dropDb = () => {
-  //   db.transaction(
-  //     (tx) => {
-  //       tx.executeSql('DROP TABLE IF EXISTS plants')
-  //     },
-  //     (error) => {
-  //       console.log('error ERROR', error)
-  //     },
-  //     () => {
-  //       console.log('success')
-  //     },
-  //   )
-  // }
-
   const addPlant = () => {
     add.onChangeName(info?.name || '')
     add.onChangeDescription(info?.description || '')
@@ -86,63 +41,6 @@ export default function ModalScreen() {
     const id = Math.random().toString(36).substr(2, 9)
 
     add.savePlant(id)
-    //   if (!info?.name) {
-    //     Alert.alert('Please fill info')
-    //     return
-    //   }
-    //   // if nextWatering is  set, set remainder to nextWatering
-    //   if (info?.nextWatering) {
-    //     // convert interval in days to seconds
-    //     const remainder = calculateNotificationInterval(
-    //       Number(info.nextWatering),
-    //       info.notificationTime,
-    //     )
-    //     schedulePushNotification({
-    //       content: {
-    //         title: 'Watering reminder',
-    //         body: `Don't forget to water ${info.name}`,
-    //         data: { data: 'goes here data prop', url: '/details/1' },
-    //       },
-    //       trigger: { seconds: Number(remainder), repeats: true },
-    //     }).then((res) => {
-    //       db.transaction(
-    //         (tx) => {
-    //           tx.executeSql(
-    //             'insert into plants (name, type, image, notificationId, nextWatering, nextFertilizing, notificationTime, createdOn) values (?, ?, ?, ?,?,?,?,?)',
-    //             [
-    //               info.name,
-    //               info.type,
-    //               info.image,
-    //               res,
-    //               remainder,
-    //               info.nextFertilizing,
-    //               info?.notificationTime
-    //                 ? info.notificationTime.toISOString()
-    //                 : '',
-    //               new Date().toISOString(),
-    //             ],
-    //           )
-    //         },
-    //         (error) => {
-    //           console.log('error', error)
-    //           Alert.alert('Error', 'Error adding plant')
-    //         },
-    //         () => {
-    //           toast.show({
-    //             duration: 3000,
-    //             placement: 'top',
-    //             render: () => (
-    //               <Box bg="$primary500" p="$10" borderRadius={15}>
-    //                 <Text>Remainder successfully set</Text>
-    //               </Box>
-    //             ),
-    //           })
-    //           //close modal
-    //           navigation.goBack()
-    //         },
-    //       )
-    //     })
-    //   }
   }
 
   const handleChange = (name: string, value: string | number | Date) => {

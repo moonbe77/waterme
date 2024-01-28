@@ -3,46 +3,25 @@ import { getAllScheduledNotificationsAsync } from 'expo-notifications'
 import { View } from '../../components/Themed'
 import { Text, Button, ButtonText, Box } from '@gluestack-ui/themed'
 
-import { openDatabase } from '../../service/sqlite'
 import { useNotes } from '@/src/hooks/use-notes-store'
-
-const db = openDatabase()
+import { schedulePushNotification } from '@/src/service/pushNotifications'
 
 export default function TabOneScreen() {
   const notes = useNotes()
 
   console.log('notes ', notes)
 
-  const getNotifications = () => {
-    getAllScheduledNotificationsAsync().then((res) => {
-      console.log('getAllScheduledNotificationsAsync ', res)
+  const scheduleNotification = () => {
+    schedulePushNotification({
+      content: {
+        title: "You've got mail! 📬",
+        body: 'Here is the notification body',
+        data: { data: 'goes here' },
+      },
+      trigger: null,
+    }).then((res) => {
+      console.log('schedulePushNotification ', res)
     })
-  }
-
-  const checkDb = () => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          'SELECT * FROM PRAGMA_TABLE_INFO("plants")',
-          [],
-          (tx, results) => {
-            console.log('Query completed', { tx, results })
-            const len = results.rows.length
-            if (len > 0) {
-              console.log('len ', len)
-              const row = results.rows.item(0)
-              console.log('row ', row)
-            }
-          },
-        )
-      },
-      (error) => {
-        console.log('error ERROR', error)
-      },
-      (...rest) => {
-        console.log('success', rest)
-      },
-    )
   }
 
   const testeDrizzle = () => {
@@ -53,26 +32,18 @@ export default function TabOneScreen() {
     <View style={styles.container}>
       <Box bg="$primary500" p="$10" borderRadius={15}>
         <Text style={styles.title}>Home</Text>
+
         <Button
-          onPress={getNotifications}
+          onPress={scheduleNotification}
           size="md"
           variant="solid"
           action="primary"
           isDisabled={false}
           isFocusVisible={false}
         >
-          <ButtonText> log NOTIFICATION</ButtonText>
+          <ButtonText> set NOTIFICATION</ButtonText>
         </Button>
-        <Button
-          onPress={checkDb}
-          size="md"
-          variant="outline"
-          action="positive"
-          isDisabled={false}
-          isFocusVisible={false}
-        >
-          <ButtonText>lo g DB</ButtonText>
-        </Button>
+
         <Button
           onPress={testeDrizzle}
           size="md"
