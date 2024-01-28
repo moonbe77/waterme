@@ -1,6 +1,7 @@
 import { db } from '@/db/client'
 import { plants, type SelectPlants } from '@/db/schema'
 import { desc } from 'drizzle-orm'
+import moment from 'moment'
 import { create } from 'zustand'
 
 type SearchStore = {
@@ -108,6 +109,9 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
         nextFertilizing,
         notificationTime,
       } = get().plant
+      // convert notification time to local time using momentjs and then convert to ISO string
+      const localeTime = moment(notificationTime).local().toISOString()
+
       if (!name) return
       db.insert(plants)
         .values({
@@ -118,7 +122,7 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           plantName,
           nextWatering,
           nextFertilizing,
-          notificationTime: notificationTime.toISOString(),
+          notificationTime: localeTime,
         })
         .onConflictDoUpdate({
           target: plants.id,
