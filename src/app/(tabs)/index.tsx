@@ -1,16 +1,8 @@
 import { StyleSheet } from 'react-native'
-import { getAllScheduledNotificationsAsync } from 'expo-notifications'
-import { View } from '../../components/Themed'
-import { Text, Button, ButtonText, Box } from '@gluestack-ui/themed'
-
-import { useNotes } from '@/src/hooks/use-notes-store'
+import { Button, ButtonText, View } from 'tamagui'
 import { schedulePushNotification } from '@/src/service/pushNotifications'
 
 export default function TabOneScreen() {
-  const notes = useNotes()
-
-  console.log('notes ', notes)
-
   const scheduleNotification = () => {
     schedulePushNotification({
       content: {
@@ -30,36 +22,16 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Box bg="$primary500" p="$10" borderRadius={15}>
-        <Text style={styles.title}>Home</Text>
-
-        <Button
-          onPress={scheduleNotification}
-          size="md"
-          variant="solid"
-          action="primary"
-          isDisabled={false}
-          isFocusVisible={false}
-        >
+      <View bg="$primary700" p="$10" borderRadius={15}>
+        <Button onPress={scheduleNotification} variant="outlined">
           <ButtonText> set NOTIFICATION</ButtonText>
         </Button>
 
-        <Button
-          onPress={testeDrizzle}
-          size="md"
-          variant="outline"
-          // action="info"
-          isDisabled={false}
-          isFocusVisible={false}
-        >
+        <Button onPress={testeDrizzle} variant="outlined">
           <ButtonText>Drizzle</ButtonText>
         </Button>
-      </Box>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
+      </View>
+      {/* <View style={styles.separator} /> */}
     </View>
   )
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Box, Button, ButtonText, Text } from '@gluestack-ui/themed'
-import { View } from 'react-native'
+import { View, Button, Text } from 'tamagui'
+
 import * as Notifications from 'expo-notifications'
 import { getAllScheduledNotificationsAsync } from 'expo-notifications'
 
@@ -31,7 +31,7 @@ function AppConfig() {
   }
 
   return (
-    <Box>
+    <View>
       <Text>config</Text>
       <Text>
         Notifications:{' '}
@@ -43,16 +43,15 @@ function AppConfig() {
       <View>
         <Button
           onPress={getNotifications}
-          size="md"
-          variant="solid"
-          action="primary"
-          isDisabled={false}
-          isFocusVisible={false}
+          size="$4"
+          width={200}
+          variant="outlined"
+          marginBottom="$10"
         >
-          <ButtonText> log NOTIFICATION</ButtonText>
+          log NOTIFICATION
         </Button>
         {scheduledNotifications.map((notification) => (
-          <Box key={notification.identifier} mb={'$10'}>
+          <View key={notification.identifier} marginBottom="$10">
             <Text>{notification.identifier}</Text>
             <Text>{notification.content.title}</Text>
             <Text>{notification.content.body}</Text>
@@ -62,18 +61,15 @@ function AppConfig() {
                   notification.identifier,
                 )
               }}
-              size="md"
-              variant="solid"
-              action="primary"
-              isDisabled={false}
-              isFocusVisible={false}
+              size="$2"
+              variant="outlined"
             >
-              <ButtonText> Cancel </ButtonText>
+              Cancel
             </Button>
-          </Box>
+          </View>
         ))}
       </View>
-    </Box>
+    </View>
   )
 }
 

@@ -1,24 +1,36 @@
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter'
+import { Platform } from 'react-native'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 
+import config from '@/tamagui.config'
+import { TamaguiProvider, createTamagui } from 'tamagui'
 import { useNotificationObserver } from '../hooks/useNotificationObserver'
-
-import { Platform } from 'react-native'
-import { GluestackUIProvider } from '@gluestack-ui/themed'
-import { config } from '@gluestack-ui/config'
 import { useLoadAssets } from '../hooks/use-load-assets'
-
 import useNotification from '../hooks/useNotification'
+
+import '@tamagui/core/reset.css'
+
 export { ErrorBoundary } from 'expo-router'
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
 }
+
+// const tokens = createTokens({
+//   color: {
+//     white: '#fff',
+//     black: '#000',
+//   },
+// })
+
+const tamaguiConfig = createTamagui(config)
+
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Inter_900Black,
+    Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+    InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   })
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -26,7 +38,7 @@ export default function RootLayout() {
     if (error) throw error
   }, [error])
 
-  return <>{loaded && <RootLayoutNav />}</>
+  return loaded && <RootLayoutNav />
 }
 
 export function RootLayoutNav() {
@@ -35,14 +47,9 @@ export function RootLayoutNav() {
 
   const { notification, expoPushToken } = useNotification()
 
-  console.log('expoPushToken ', {
-    notification,
-    expoPushToken,
-  })
   if (!isLoaded) return null
-
   return (
-    <GluestackUIProvider config={config}>
+    <TamaguiProvider config={tamaguiConfig}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
@@ -51,6 +58,6 @@ export function RootLayoutNav() {
         />
       </Stack>
       <StatusBar style={Platform.OS === 'ios' ? 'dark' : 'auto'} />
-    </GluestackUIProvider>
+    </TamaguiProvider>
   )
 }

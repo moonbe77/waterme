@@ -152,5 +152,4 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
 }))
 
 export const useEditPlant = () => useEditPlantStore((state) => state.plant)
-export const useEditPlantActions = () =>
-  useEditPlantStore((state) => state.actions)
+export const useEditPlantActions = () => useEditPlantStore((state) => state)

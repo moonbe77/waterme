@@ -1,46 +1,44 @@
 import { StatusBar } from 'expo-status-bar'
-import { Alert, Platform, StyleSheet } from 'react-native'
+import { Platform, StyleSheet } from 'react-native'
 import { schedulePushNotification } from '../service/pushNotifications'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import {
-  Pressable,
-  Input,
-  Box,
-  VStack,
-  Text,
-  Button,
-  Heading,
-  useToast,
-  ButtonText,
-  InputField,
-} from '@gluestack-ui/themed'
+import { Input, XStack, Text, Button, Heading, ButtonText } from 'tamagui'
 import { View } from '../components/Themed'
 import { useNavigation } from 'expo-router'
-import { useEffect, useState } from 'react'
-import { openDatabase } from '../service/sqlite'
-import type { IPlant } from '../models/plantsModel'
-import { calculateNotificationInterval } from '../service/helpers'
-import { useEditPlantActions } from '../hooks/use-plants-store'
+import { useState } from 'react'
 
-const db = openDatabase()
+import type { IPlant } from '../models/plantsModel'
+
+import { useEditPlantActions } from '../hooks/use-plants-store'
 
 export default function ModalScreen() {
   const [info, setInfo] = useState<Partial<IPlant> | null>(null)
   const navigation = useNavigation()
-  const toast = useToast()
-  const add = useEditPlantActions()
+
+  const { actions, plant } = useEditPlantActions()
 
   const addPlant = () => {
-    add.onChangeName(info?.name || '')
-    add.onChangeDescription(info?.description || '')
-    add.onChangeNextWatering(info?.nextWatering || '')
-    add.onChangeNextFertilizing(info?.nextFertilizing || '')
-    add.onChangeNotificationTime(info?.notificationTime || new Date())
+    actions.onChangeName(info?.name || '')
+    actions.onChangeDescription(info?.description || '')
+    actions.onChangeNextWatering(info?.nextWatering || '')
+    actions.onChangeNextFertilizing(info?.nextFertilizing || '')
+    actions.onChangeNotificationTime(info?.notificationTime || new Date())
 
+    schedulePushNotification({
+      content: {
+        title: 'Watering time!',
+        body: `Don't forget to water your ${plant?.name}`,
+        data: { data: plant },
+      },
+      trigger: {
+        repeats: true,
+      },
+    }).then((res) => {
+      console.log('schedulePushNotification ', res)
+
+      actions.savePlant(res)
+    })
     // create unique id
-    const id = Math.random().toString(36).substr(2, 9)
-
-    add.savePlant(id)
   }
 
   const handleChange = (name: string, value: string | number | Date) => {
@@ -52,74 +50,52 @@ export default function ModalScreen() {
     <View style={styles.container}>
       <View style={styles.line} />
       <View>
-        <Box alignItems="center" mb={4}>
-          <Heading size="xl">Set New Remainder</Heading>
-        </Box>
-        <VStack
-          space="md"
-          // overflow="hidden"
-          // borderColor="$amber700"
-          // background="gray.700"
-          // h="full"
-          // w="full"
-          px="$10"
-          // alignItems="center"
-        >
-          <Box>
+        <View>
+          <Heading size="$10">Set New Remainder</Heading>
+        </View>
+        <XStack alignItems="center" gap="$2">
+          <View>
             <Input
               id="name"
-              size="md"
-              isFullWidth={true}
-              // color={'white'}
-            >
-              <InputField
-                placeholder="Name / Title"
-                onChangeText={(value) => handleChange('name', value)}
-                value={info?.name || ''}
-              />
-            </Input>
-          </Box>
-          <Box>
+              size="$6"
+              placeholder="Name / Title"
+              onChangeText={(value) => handleChange('name', value)}
+              value={info?.name || ''}
+            />
+          </View>
+          <View>
             <Input
               id="description"
-              size="md"
-              isFullWidth={true}
-              // color={'white'}
-            >
-              <InputField
-                placeholder="Description"
-                onChangeText={(value) => handleChange('description', value)}
-                value={info?.description || ''}
-              />
-            </Input>
-          </Box>
-          <Box>
+              size="$6"
+              placeholder="Description"
+              onChangeText={(value) => handleChange('description', value)}
+              value={info?.description || ''}
+            />
+          </View>
+          <View>
             <Input
               // w="1/2"
               id="waterInterval"
-              size="md"
-            >
-              <InputField
-                placeholder="Watering interval in days"
-                type="text"
-                inputMode="numeric"
-                value={info?.nextWatering || ''}
-                onChangeText={(value) => handleChange('nextWatering', value)}
-              />
-            </Input>
-          </Box>
-          <Box>
-            <Input id="fertilizingInterval" size="md">
-              <InputField
-                placeholder="Fertilizing interval in days"
-                onChangeText={(value) => handleChange('nextFertilizing', value)}
-                inputMode="numeric"
-              />
-            </Input>
-          </Box>
+              size="$6"
+              placeholder="Watering interval in days"
+              // type="text"
+              // inputMode="numeric"
+              value={info?.nextWatering || ''}
+              onChangeText={(value) => handleChange('nextWatering', value)}
+            />
+          </View>
+          <View>
+            <Input
+              id="fertilizingInterval"
+              size="$6"
+              placeholder="Fertilizing interval in days"
+              onChangeText={(value) => handleChange('nextFertilizing', value)}
+              inputMode="numeric"
+            />
+          </View>
 
-          <Box>
-            <Text color="amber.100">Notification Time</Text>
+          <View>
+            <Text color="red">Notification Time</Text>
             <RNDateTimePicker
               style={{ backgroundColor: 'white' }}
               themeVariant="light"
@@ -131,16 +107,16 @@ export default function ModalScreen() {
                 handleChange('notificationTime', selectedDate)
               }}
             />
-          </Box>
-          <Box alignItems="center">
-            <Button onPress={addPlant} size="lg">
+          </View>
+          <View>
+            <Button onPress={addPlant} size="$6">
               <ButtonText>Set Reminder</ButtonText>
             </Button>
-          </Box>
+          </View>
           {/* <Pressable onPress={dropDb}>
             <Text color={'red.100'}>DROP TABLE DANGER</Text>
           </Pressable> */}
-        </VStack>
+        </XStack>
       </View>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
