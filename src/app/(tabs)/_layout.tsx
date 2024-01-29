@@ -49,7 +49,7 @@ export default function TabLayout() {
           title: 'Feed',
           tabBarIcon: ({ color }) => <TabBarIcon name="leaf" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/create" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome

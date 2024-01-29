@@ -29,5 +29,18 @@ export const plants = sqliteTable('plants', {
   updatedAt: text('updated_at'),
 })
 
+export const notifications = sqliteTable('notifications', {
+  id: integer('id').primaryKey(),
+  title: text('title'),
+  body: text('body'),
+  createdAt: text('created_at')
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: text('updated_at'),
+  notif_id: text('notif_id'),
+  plant_id: text('plant_id'),
+})
+
 export type SelectNote = typeof notes.$inferSelect
 export type SelectPlants = typeof plants.$inferSelect
+export type SelectNotifications = typeof notifications.$inferSelect

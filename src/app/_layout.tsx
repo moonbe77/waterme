@@ -53,7 +53,11 @@ export function RootLayoutNav() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
-          name="modal"
+          name="create"
+          options={{ presentation: 'modal', headerShown: false }}
+        />
+        <Stack.Screen
+          name="config"
           options={{ presentation: 'modal', headerShown: false }}
         />
       </Stack>

@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router'
 import React, { useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { openDatabase } from '../../service/sqlite'
-import { IPlant } from '../../models/plantsModel'
+import type { IPlant } from '../../models/plantsModel'
 
 const db = openDatabase()
 function DetailsScreen() {
@@ -18,13 +18,13 @@ function DetailsScreen() {
           [],
           (_, { rows }) => {
             setInfo(rows._array)
-          }
+          },
         )
       },
       null,
       () => {
         // console.log('success')
-      }
+      },
     )
   }, [slug])
 
