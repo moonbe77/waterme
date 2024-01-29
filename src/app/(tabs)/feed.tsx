@@ -55,6 +55,7 @@ function Feed() {
         data={plants}
         renderItem={({ item }) => <Item item={item} onPress={handlePress} />}
         keyExtractor={(item) => `${item.id}`}
+
         //  refreshing={isLoading}
         // onRefresh={() => {
         //   actions.refetch()
@@ -79,13 +80,13 @@ const Item = ({
     size="$4"
     width="100%"
     height={200}
+    marginBottom="$4"
     scale={0.9}
     hoverStyle={{ scale: 0.925 }}
     pressStyle={{ scale: 0.975 }}
     onPress={() => {
       onPress(item.id)
     }}
-    debug
   >
     {/* <Link href={`/details/${item.id}`}> */}
     <Card.Header
@@ -146,50 +147,4 @@ export const Container = styled(View, {
   padding: 10,
   backgroundColor: '$blue1',
   flex: 1,
-})
-
-const styles = StyleSheet.create({
-  card: {
-    marginVertical: 10,
-    marginHorizontal: 20,
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    elevation: 5,
-    height: 200,
-    shadowOffset: { width: 0, height: 0 },
-  },
-  link: {
-    backgroundColor: 'transparent',
-    width: '100%',
-    height: '100%',
-  },
-  cardContent: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'yellow',
-  },
-  titleWrapper: {
-    flexDirection: 'row',
-    marginBottom: 10,
-    width: '100%',
-    backgroundColor: 'red',
-  },
-  createdOn: {
-    fontSize: 12,
-    color: 'red',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 32,
-    color: colors.grape,
-  },
-  type: {
-    fontSize: 16,
-  },
 })

@@ -19,6 +19,23 @@ function AppConfig() {
       alert(err)
     })
 
+  async function logNextTriggerDate(
+    trigger: Notifications.SchedulableNotificationTriggerInput,
+  ) {
+    try {
+      const nextTriggerDate =
+        await Notifications.getNextTriggerDateAsync(trigger)
+      console.log(
+        ' nextTriggerDate >>>> : ',
+        nextTriggerDate === null
+          ? 'No next trigger date'
+          : new Date(nextTriggerDate).getTime(),
+      )
+    } catch (e) {
+      console.warn(`Couldn't have calculated next trigger date: ${e}`)
+    }
+  }
+
   const getNotifications = () => {
     getAllScheduledNotificationsAsync()
       .then((res) => {
@@ -55,6 +72,8 @@ function AppConfig() {
             <Text>{notification.identifier}</Text>
             <Text>{notification.content.title}</Text>
             <Text>{notification.content.body}</Text>
+            <Text>{notification.trigger?.type}</Text>
+            <Text></Text>
             <Button
               onPress={() => {
                 Notifications.cancelScheduledNotificationAsync(

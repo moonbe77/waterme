@@ -41,12 +41,17 @@ export default function ModalScreen() {
 
     schedulePushNotification({
       content: {
-        title: 'Watering time!',
-        body: `Don't forget to water your ${plant?.name}`,
+        title: 'Watering time! 🌹',
+        body: `Don't forget to water ${info?.name}`,
         data: { data: plant },
       },
       trigger: {
         repeats: true,
+        weekday: 3,
+        hour: 10,
+        minute: 0,
+        second: 0,
+        timezone: 'sydney/Australia',
       },
     }).then((res) => {
       console.log('schedulePushNotification ', res)
