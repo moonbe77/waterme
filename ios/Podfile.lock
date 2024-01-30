@@ -97,7 +97,7 @@ PODS:
     - SDWebImageWebPCoder (~> 0.13.0)
   - ExpoKeepAwake (12.8.2):
     - ExpoModulesCore
-  - ExpoLinearGradient (12.3.0):
+  - ExpoLinearGradient (12.7.1):
     - ExpoModulesCore
   - ExpoModulesCore (1.11.8):
     - glog
@@ -1507,7 +1507,7 @@ SPEC CHECKSUMS:
   ExpoHead: dda4dd22972750dd2baa5c0231b86dc6e10ddfd9
   ExpoImage: 2b71f20472f293c1fbbf2400795b03d5bf8dd598
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
-  ExpoLinearGradient: 5966dd5d49872cc9c104fedc8bbc298b6049b2e8
+  ExpoLinearGradient: d10226652f849e675528883aa45afd2358c2f92f
   ExpoModulesCore: 96d1751929ad10622773bb729ab28a8423f0dd0c
   ExpoSQLite: 5a7be0d39d7f4957e6d1e65934aedba99098ac85
   EXSplashScreen: 39244885abfb1b12765aae89edb90f8c88db6bbd

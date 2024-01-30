@@ -3,12 +3,11 @@ import { Platform } from 'react-native'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
-
-import config from '@/tamagui.config'
-import { TamaguiProvider, createTamagui } from 'tamagui'
+import { TamaguiProvider } from 'tamagui'
 import { useNotificationObserver } from '../hooks/useNotificationObserver'
 import { useLoadAssets } from '../hooks/use-load-assets'
 import useNotification from '../hooks/useNotification'
+import config from '@/tamagui.config'
 
 import '@tamagui/core/reset.css'
 
@@ -25,7 +24,7 @@ export const unstable_settings = {
 //   },
 // })
 
-const tamaguiConfig = createTamagui(config)
+const tamaguiConfig = config
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -54,7 +53,7 @@ export function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="create"
-          options={{ presentation: 'modal', headerShown: false }}
+          options={{ presentation: 'card', headerShown: false }}
         />
         <Stack.Screen
           name="config"

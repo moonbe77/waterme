@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
   Platform,
@@ -7,7 +8,7 @@ import {
   Keyboard,
 } from 'react-native'
 import { schedulePushNotification } from '../service/pushNotifications'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
+
 import {
   Input,
   XStack,
@@ -17,20 +18,31 @@ import {
   ButtonText,
   YStack,
   ScrollView,
+  Select,
+  Adapt,
+  Sheet,
+  getFontSize,
+  type FontSizeTokens,
 } from 'tamagui'
+import { Check, ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
 import { View } from '../components/Themed'
 import { useNavigation } from 'expo-router'
-import { useState } from 'react'
-
 import type { IPlant } from '../models/plantsModel'
+import { useEditPlant, useEditPlantActions } from '../hooks/use-plants-store'
+import { LinearGradient } from '@tamagui/linear-gradient'
+import CustomSelect from '../components/CustomSelect'
 
-import { useEditPlantActions } from '../hooks/use-plants-store'
+const calendarInterval = [
+  { label: 'Daily', value: 'daily' },
+  { label: 'Weekly', value: 'weekly' },
+  { label: 'Monthly', value: 'monthly' },
+]
 
 export default function ModalScreen() {
   const [info, setInfo] = useState<Partial<IPlant> | null>(null)
   const navigation = useNavigation()
-
-  const { actions, plant } = useEditPlantActions()
+  const plant = useEditPlant()
+  const actions = useEditPlantActions()
 
   const addPlant = () => {
     actions.onChangeName(info?.name || '')
@@ -103,7 +115,16 @@ export default function ModalScreen() {
                   width="100%"
                 />
 
-                <Input
+                <View>
+                  <Text color="$blue10">Schedule Remainder</Text>
+                  {/* <CustomSelect
+                    items={calendarInterval}
+                    onChange={actions.onChangeNextWatering}
+                    value={plant.nextFertilizing}
+                  /> */}
+                </View>
+
+                {/* <Input
                   id="description"
                   size="$6"
                   placeholder="Description"
@@ -131,7 +152,7 @@ export default function ModalScreen() {
                   }
                   inputMode="numeric"
                   width="100%"
-                />
+                /> */}
 
                 {/* <View> */}
                 {/* <Text color="$">Notification Time</Text> */}
