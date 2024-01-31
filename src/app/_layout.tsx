@@ -1,9 +1,10 @@
 import { useFonts, Inter_900Black } from '@expo-google-fonts/inter'
+import { useReactNavigationDevTools } from '@dev-plugins/react-navigation'
 import { Platform } from 'react-native'
-import { Stack } from 'expo-router'
+import { Stack, useNavigationContainerRef } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
-import { TamaguiProvider } from 'tamagui'
+import { Button, TamaguiProvider } from 'tamagui'
 import { useNotificationObserver } from '../hooks/useNotificationObserver'
 import { useLoadAssets } from '../hooks/use-load-assets'
 import useNotification from '../hooks/useNotification'
@@ -31,7 +32,11 @@ export default function RootLayout() {
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   })
+  const navigationRef = useNavigationContainerRef()
 
+  useReactNavigationDevTools(navigationRef)
+
+  // console.log(tamaguiConfig)
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error
@@ -51,9 +56,14 @@ export function RootLayoutNav() {
     <TamaguiProvider config={tamaguiConfig}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="details" options={{ headerShown: false }} /> */}
         <Stack.Screen
           name="create"
-          options={{ presentation: 'card', headerShown: false }}
+          options={{
+            presentation: 'card',
+            headerShown: true,
+            title: 'Set a New Remainder',
+          }}
         />
         <Stack.Screen
           name="config"

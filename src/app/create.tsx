@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
   Platform,
@@ -11,25 +11,22 @@ import { schedulePushNotification } from '../service/pushNotifications'
 
 import {
   Input,
-  XStack,
   Text,
   Button,
   Heading,
   ButtonText,
   YStack,
   ScrollView,
-  Select,
-  Adapt,
-  Sheet,
-  getFontSize,
-  type FontSizeTokens,
+  View,
 } from 'tamagui'
-import { Check, ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
-import { View } from '../components/Themed'
+
 import { useNavigation } from 'expo-router'
 import type { IPlant } from '../models/plantsModel'
-import { useEditPlant, useEditPlantActions } from '../hooks/use-plants-store'
-import { LinearGradient } from '@tamagui/linear-gradient'
+import {
+  useEditPlant,
+  useEditPlantActions,
+  useEditPlantError,
+} from '../hooks/use-plants-store'
 import CustomSelect from '../components/CustomSelect'
 
 const calendarInterval = [
@@ -39,99 +36,67 @@ const calendarInterval = [
 ]
 
 export default function ModalScreen() {
-  const [info, setInfo] = useState<Partial<IPlant> | null>(null)
   const navigation = useNavigation()
   const plant = useEditPlant()
   const actions = useEditPlantActions()
+  const error = useEditPlantError()
 
   const addPlant = () => {
-    actions.onChangeName(info?.name || '')
-    actions.onChangeDescription(info?.description || '')
-    actions.onChangeNextWatering(info?.nextWatering || '')
-    actions.onChangeNextFertilizing(info?.nextFertilizing || '')
-    actions.onChangeNotificationTime(info?.notificationTime || new Date())
-
-    schedulePushNotification({
-      content: {
-        title: 'Watering time! 🌹',
-        body: `Don't forget to water ${info?.name}`,
-        data: { data: plant },
-      },
-      trigger: {
-        repeats: true,
-        weekday: 3,
-        hour: 10,
-        minute: 0,
-        second: 0,
-        timezone: 'sydney/Australia',
-      },
-    }).then((res) => {
-      console.log('schedulePushNotification ', res)
-
-      actions.savePlant(res)
-    })
-    // create unique id
+    // TODO: create unique id
+    const id = Math.random().toString(36).substr(2, 9)
+    console.log({ plant, id })
+    actions.savePlant(id)
   }
 
   const handleChange = (name: string, value: string | number | Date) => {
     console.log({ name, value })
-    setInfo((prev) => ({ ...prev, [name]: value }))
+    // setInfo((prev) => ({ ...prev, [name]: value }))
   }
 
   return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <View style={styles.line} />
-        <View>
-          <View
-            style={{
-              backgroundColor: '#fff',
-              padding: 15,
-              borderBottomWidth: 1,
-              borderBottomColor: '#eee',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+      <View backgroundColor="$green2" padding="$4" width="100%" height="100%">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
           >
-            <Heading>Set New Remainder</Heading>
-          </View>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView
-              contentContainerStyle={{ flexGrow: 1 }}
-              keyboardShouldPersistTaps="handled"
+            <View>{error && <Text color="$red10">{error.message}</Text>}</View>
+            <YStack
+              alignItems="center"
+              gap="$6"
+              paddingHorizontal="$6"
+              marginTop="$2"
             >
-              <YStack
-                alignItems="center"
-                gap="$4"
-                paddingHorizontal="$10"
-                marginTop="$4"
-              >
-                <Input
-                  id="name"
-                  size="$6"
-                  placeholder="Name / Title"
-                  onChangeText={(value) => handleChange('name', value)}
-                  value={info?.name || ''}
-                  width="100%"
-                />
+              <Input
+                id="name"
+                size="$5"
+                placeholder="Name / Title"
+                // onChangeText={(value) => handleChange('name', value)}
+                onChangeText={actions.onChangeName}
+                value={plant.name}
+                width="100%"
+              />
 
-                <View>
-                  <Text color="$blue10">Schedule Remainder</Text>
-                  {/* <CustomSelect
-                    items={calendarInterval}
-                    onChange={actions.onChangeNextWatering}
-                    value={plant.nextFertilizing}
-                  /> */}
-                </View>
+              <Input
+                id="description"
+                size="$6"
+                placeholder="Description"
+                onChangeText={actions.onChangeDescription}
+                value={plant.description}
+                width="100%"
+              />
 
-                {/* <Input
-                  id="description"
-                  size="$6"
-                  placeholder="Description"
-                  onChangeText={(value) => handleChange('description', value)}
-                  value={info?.description || ''}
-                  width="100%"
+              <View>
+                <Text color="$blue10">Schedule Remainder</Text>
+                <CustomSelect
+                  items={calendarInterval}
+                  onChange={actions.onChangeNextWatering}
+                  value={plant.nextFertilizing}
                 />
+              </View>
+
+              {/* 
 
                 <Input
                   id="waterInterval"
@@ -154,9 +119,9 @@ export default function ModalScreen() {
                   width="100%"
                 /> */}
 
-                {/* <View> */}
-                {/* <Text color="$">Notification Time</Text> */}
-                {/* <RNDateTimePicker
+              {/* <View> */}
+              {/* <Text color="$">Notification Time</Text> */}
+              {/* <RNDateTimePicker
                     style={{ backgroundColor: 'red' }}
                     themeVariant="light"
                     display="spinner"
@@ -167,45 +132,25 @@ export default function ModalScreen() {
                       handleChange('notificationTime', selectedDate)
                     }}
                   /> */}
-                {/* </View> */}
-                <View>
-                  <Button onPress={addPlant} size="$6">
-                    <ButtonText>Set Reminder</ButtonText>
-                  </Button>
-                </View>
-                {/* <Pressable onPress={dropDb}>
+              {/* </View> */}
+              <View>
+                <Button onPress={addPlant} size="$6">
+                  <ButtonText>Set Reminder</ButtonText>
+                </Button>
+              </View>
+
+              <View>
+                <Text>{JSON.stringify(plant, null, 2)}</Text>
+              </View>
+              {/* <Pressable onPress={dropDb}>
             <Text color={'red.100'}>DROP TABLE DANGER</Text>
           </Pressable> */}
-              </YStack>
-            </ScrollView>
-          </TouchableWithoutFeedback>
-        </View>
+            </YStack>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+
         <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
       </View>
     </KeyboardAvoidingView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-  },
-  line: {
-    borderColor: '#eee',
-    borderWidth: 1,
-    marginVertical: 15,
-    width: 60,
-    height: 10,
-    marginLeft: '50%',
-    transform: [{ translateX: -30 }],
-    backgroundColor: 'gray',
-    borderRadius: 10,
-  },
-  contentWrapper: {
-    backgroundColor: '#ff5',
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-})

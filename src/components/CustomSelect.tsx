@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ChevronDown, ChevronUp, Check } from '@tamagui/lucide-icons'
+import { ChevronDown, ChevronUp, Check, Sprout } from '@tamagui/lucide-icons'
 import { LinearGradient } from 'tamagui/linear-gradient'
 import {
   Select,
@@ -29,13 +29,13 @@ function CustomSelect(props: CustomSelectProps) {
         onValueChange={props.onChange}
         disablePreventBodyScroll
       >
-        <Select.Trigger width={220} iconAfter={ChevronDown}>
-          <Select.Value placeholder="Something" />
+        <Select.Trigger width={220} iconAfter={Sprout}>
+          <Select.Value placeholder="Notification Interval" />
         </Select.Trigger>
 
         <Adapt when="sm" platform="touch">
           <Sheet
-            native={true} // FIXME: add from props
+            native={false} // FIXME: add from props
             modal
             dismissOnSnapToBottom
             animationConfig={{
@@ -84,10 +84,10 @@ function CustomSelect(props: CustomSelectProps) {
             // animateOnly={['transform', 'opacity']}
             // enterStyle={{ o: 0, y: -10 }}
             // exitStyle={{ o: 0, y: 10 }}
-            minWidth={200}
+            minWidth={100}
           >
             <Select.Group>
-              <Select.Label>Fruits</Select.Label>
+              <Select.Label>Interval</Select.Label>
               {/* for longer lists memoizing these is useful */}
               {useMemo(
                 () =>
@@ -108,23 +108,6 @@ function CustomSelect(props: CustomSelectProps) {
                 [props.items],
               )}
             </Select.Group>
-            {/* Native gets an extra icon */}
-            {true && (
-              <YStack
-                position="absolute"
-                right={0}
-                top={0}
-                bottom={0}
-                alignItems="center"
-                justifyContent="center"
-                width={'$4'}
-                pointerEvents="none"
-              >
-                <ChevronDown
-                  size={getFontSize(('$6' as FontSizeTokens) ?? '$true')}
-                />
-              </YStack>
-            )}
           </Select.Viewport>
 
           <Select.ScrollDownButton

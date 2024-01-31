@@ -30,7 +30,7 @@ export const plants = sqliteTable('plants', {
 })
 
 export const notifications = sqliteTable('notifications', {
-  id: integer('id').primaryKey(),
+  id: text('id').primaryKey(),
   title: text('title'),
   body: text('body'),
   createdAt: text('created_at')

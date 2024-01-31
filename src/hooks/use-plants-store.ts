@@ -1,8 +1,14 @@
 import { db } from '@/db/client'
-import { plants, type SelectPlants } from '@/db/schema'
+import {
+  plants,
+  notifications,
+  type SelectNotifications,
+  type SelectPlants,
+} from '@/db/schema'
 import { desc } from 'drizzle-orm'
 import moment from 'moment'
 import { create } from 'zustand'
+import { schedulePushNotification } from '../service/pushNotifications'
 
 type SearchStore = {
   searchText: string
@@ -60,6 +66,10 @@ type EditPlantStore = {
     nextFertilizing: string
     notificationTime: Date
   }
+  error: {
+    status: string
+    message: string
+  }
   actions: {
     onChangeName: (name: string) => void
     onChangeDescription: (body: string) => void
@@ -83,11 +93,15 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
     nextFertilizing: '',
     notificationTime: new Date(),
   },
+  error: {
+    status: '',
+    message: '',
+  },
   actions: {
     onChangeName: (name) =>
       set((state) => ({ plant: { ...state.plant, name } })),
-    onChangeDescription: (body) =>
-      set((state) => ({ plant: { ...state.plant, body } })),
+    onChangeDescription: (description) =>
+      set((state) => ({ plant: { ...state.plant, description } })),
     onChangeType: (type) =>
       set((state) => ({ plant: { ...state.plant, type } })),
     onChangePlantName: (plantName) =>
@@ -109,26 +123,87 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
         nextFertilizing,
         notificationTime,
       } = get().plant
+      if (!name || name === '') {
+        console.log('name ', get())
+        set({
+          error: {
+            status: 'error',
+            message: 'Please enter name',
+          },
+        })
+        return
+      } else {
+        set({
+          error: {
+            status: '',
+            message: '',
+          },
+        })
+      }
+
       // convert notification time to local time using momentjs and then convert to ISO string
       const localeTime = moment(notificationTime).local().toISOString()
 
-      if (!name) return
-      db.insert(plants)
-        .values({
-          id: Number(id),
-          name,
-          description,
-          type,
-          plantName,
-          nextWatering,
-          nextFertilizing,
-          notificationTime: localeTime,
+      schedulePushNotification({
+        content: {
+          title: 'Watering time! 🌹',
+          body: `Don't forget to water ${name}`,
+          data: { data: get().plant },
+        },
+        trigger: {
+          repeats: true,
+          weekday: 3,
+          hour: 10,
+          minute: 0,
+          second: 0,
+          timezone: 'sydney/Australia',
+        },
+      })
+        .then((res) => {
+          console.log('schedulePushNotification ', res)
+
+          db.insert(plants)
+            .values({
+              id: Number(id),
+              name,
+              description,
+              type,
+              plantName,
+              nextWatering,
+              nextFertilizing,
+              notificationTime: localeTime,
+            })
+            .then((res) => {
+              console.log('insert notification ', res)
+            })
+            .catch((err) => {
+              console.log('insert notification err', err)
+            })
+          // .onConflictDoUpdate({
+          //   target: plants.id,
+          //   set: { name, description, updatedAt: new Date().toISOString() },
+          // })
+          // .run()
+
+          db.insert(notifications)
+            .values({
+              id: res,
+              title: 'Watering time! 🌹',
+              body: `Don't forget to water ${name}`,
+              notif_id: res,
+              plant_id: id,
+            })
+            .then((res) => {
+              console.log('insert notification ', res)
+            })
+            .catch((err) => {
+              console.log('insert notification err', err)
+            })
         })
-        .onConflictDoUpdate({
-          target: plants.id,
-          set: { name, description, updatedAt: new Date().toISOString() },
+        .catch((err) => {
+          console.log('schedulePushNotification err', err)
         })
-        .run()
+
       set({
         plant: {
           name: '',
@@ -138,6 +213,10 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           nextWatering: new Date().toISOString(),
           nextFertilizing: new Date().toISOString(),
           notificationTime: new Date(),
+        },
+        error: {
+          status: '',
+          message: '',
         },
       })
       usePlantsStore.getState().actions.refetch()
@@ -152,5 +231,6 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
 }))
 
 export const useEditPlant = () => useEditPlantStore((state) => state.plant)
+export const useEditPlantError = () => useEditPlantStore((state) => state.error)
 export const useEditPlantActions = () =>
   useEditPlantStore((state) => state.actions)
