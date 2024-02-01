@@ -7,15 +7,15 @@ type Item = {
   value: string | number
 }
 
-function DayOfWeek({
+const ScrollSelect = <TItem extends Item>({
   items,
   onChange,
   selectedValue,
 }: {
-  items: Item[]
-  onChange: (value: string | number) => void
-  selectedValue: number
-}) {
+  items: TItem[]
+  onChange: (value: TItem) => void
+  selectedValue: any
+}) => {
   return (
     <View width="100%" overflow="scroll">
       <Heading>Day of Week</Heading>
@@ -30,7 +30,7 @@ function DayOfWeek({
               }
               p="$2"
               borderRadius="$2"
-              onPress={() => onChange(item.value)}
+              onPress={() => onChange(item)}
             >
               <Text
                 color={selectedValue === item.value ? '$green12' : '$green2'}
@@ -45,4 +45,13 @@ function DayOfWeek({
   )
 }
 
-export default DayOfWeek
+// ScrollSelect({
+// 	items: [
+// 	{
+// 		label: 'label'
+// 		value: '123'
+// 	}
+// 	]
+// })
+
+export default ScrollSelect

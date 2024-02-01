@@ -68,7 +68,7 @@ type EditPlantStore = {
     nextFertilizing: string
     notificationTime: Date
     notificationDay: number
-    notificationInterval: N_INTERVAL
+    notificationInterval: string
   }
   error: {
     status: string
@@ -83,7 +83,7 @@ type EditPlantStore = {
     onChangeNextFertilizing: (nextFertilizing: string) => void
     onChangeNotificationTime: (notificationTime: Date) => void
     onChangeNotificationDay: (notificationDay: number | string) => void
-    onChangeNotificationInterval: (notificationInterval: N_INTERVAL) => void
+    onChangeNotificationInterval: (notificationInterval: string) => void
     savePlant: (id: string) => void
     // deleteNote: (id: string) => void
   }

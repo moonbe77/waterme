@@ -1,4 +1,5 @@
 export enum N_INTERVAL {
+  daily = 'daily',
   weekly = 'weekly',
   monthly = 'monthly',
   yearly = 'yearly',

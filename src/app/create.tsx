@@ -28,13 +28,20 @@ import {
   useEditPlantError,
 } from '../hooks/use-plants-store'
 import CustomSelect from '../components/CustomSelect'
-import DayOfWeek from '../components/DayOfWeek'
+import ScrollSelect from '../components/ScrollSelect'
 import { weekday } from '../config/constants'
+import { N_INTERVAL } from '../models/types'
 
-const calendarInterval = [
-  { label: 'Daily', value: 'daily' },
-  { label: 'Weekly', value: 'weekly' },
-  { label: 'Monthly', value: 'monthly' },
+type CalInterval = {
+  label: string
+  value: N_INTERVAL
+}
+
+const calendarInterval: CalInterval[] = [
+  { label: 'Daily', value: N_INTERVAL.daily },
+  { label: 'Weekly', value: N_INTERVAL.weekly },
+  { label: 'Monthly', value: N_INTERVAL.monthly },
+  { label: 'Yearly', value: N_INTERVAL.yearly },
 ]
 
 export default function ModalScreen() {
@@ -86,15 +93,17 @@ export default function ModalScreen() {
 
               <View>
                 <Text color="$blue10">Schedule Remainder</Text>
-                {/* <CustomSelect
+                <ScrollSelect
                   items={calendarInterval}
-                  onChange={actions.onChangeNotificationInterval}
-                  value={plant.notificationInterval}
-                /> */}
+                  onChange={(item) =>
+                    actions.onChangeNotificationInterval(`${item.value}`)
+                  }
+                  selectedValue={plant.notificationInterval}
+                />
               </View>
-              <DayOfWeek
+              <ScrollSelect
                 items={weekday}
-                onChange={actions.onChangeNotificationDay}
+                onChange={(item) => actions.onChangeNotificationDay(item.value)}
                 selectedValue={plant.notificationDay}
               />
 
