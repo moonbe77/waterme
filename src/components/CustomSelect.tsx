@@ -10,6 +10,7 @@ import {
   type FontSizeTokens,
   type SelectProps,
 } from 'tamagui'
+import type { N_INTERVAL } from '../models/types'
 
 type CustomSelectProps = SelectProps & {
   value: string
@@ -17,7 +18,7 @@ type CustomSelectProps = SelectProps & {
     label: string
     value: string
   }[]
-  onChange: (val: string) => void
+  onChange: (val: N_INTERVAL) => void
 }
 
 function CustomSelect(props: CustomSelectProps) {

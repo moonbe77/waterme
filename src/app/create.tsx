@@ -21,13 +21,15 @@ import {
 } from 'tamagui'
 
 import { useNavigation } from 'expo-router'
-import type { IPlant } from '../models/plantsModel'
+
 import {
   useEditPlant,
   useEditPlantActions,
   useEditPlantError,
 } from '../hooks/use-plants-store'
 import CustomSelect from '../components/CustomSelect'
+import DayOfWeek from '../components/DayOfWeek'
+import { weekday } from '../config/constants'
 
 const calendarInterval = [
   { label: 'Daily', value: 'daily' },
@@ -48,11 +50,6 @@ export default function ModalScreen() {
     actions.savePlant(id)
   }
 
-  const handleChange = (name: string, value: string | number | Date) => {
-    console.log({ name, value })
-    // setInfo((prev) => ({ ...prev, [name]: value }))
-  }
-
   return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
       <View backgroundColor="$green2" padding="$4" width="100%" height="100%">
@@ -65,7 +62,7 @@ export default function ModalScreen() {
             <YStack
               alignItems="center"
               gap="$6"
-              paddingHorizontal="$6"
+              paddingHorizontal="$2"
               marginTop="$2"
             >
               <Input
@@ -89,12 +86,17 @@ export default function ModalScreen() {
 
               <View>
                 <Text color="$blue10">Schedule Remainder</Text>
-                <CustomSelect
+                {/* <CustomSelect
                   items={calendarInterval}
-                  onChange={actions.onChangeNextWatering}
-                  value={plant.nextFertilizing}
-                />
+                  onChange={actions.onChangeNotificationInterval}
+                  value={plant.notificationInterval}
+                /> */}
               </View>
+              <DayOfWeek
+                items={weekday}
+                onChange={actions.onChangeNotificationDay}
+                selectedValue={plant.notificationDay}
+              />
 
               {/* 
 

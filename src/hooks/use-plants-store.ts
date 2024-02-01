@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { db } from '@/db/client'
 import {
   plants,
@@ -9,6 +10,7 @@ import { desc } from 'drizzle-orm'
 import moment from 'moment'
 import { create } from 'zustand'
 import { schedulePushNotification } from '../service/pushNotifications'
+import { N_INTERVAL } from '../models/types'
 
 type SearchStore = {
   searchText: string
@@ -65,6 +67,8 @@ type EditPlantStore = {
     nextWatering: string
     nextFertilizing: string
     notificationTime: Date
+    notificationDay: number
+    notificationInterval: N_INTERVAL
   }
   error: {
     status: string
@@ -78,6 +82,8 @@ type EditPlantStore = {
     onChangeNextWatering: (nextWatering: string) => void
     onChangeNextFertilizing: (nextFertilizing: string) => void
     onChangeNotificationTime: (notificationTime: Date) => void
+    onChangeNotificationDay: (notificationDay: number | string) => void
+    onChangeNotificationInterval: (notificationInterval: N_INTERVAL) => void
     savePlant: (id: string) => void
     // deleteNote: (id: string) => void
   }
@@ -92,6 +98,8 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
     nextWatering: '',
     nextFertilizing: '',
     notificationTime: new Date(),
+    notificationDay: 0,
+    notificationInterval: N_INTERVAL.weekly,
   },
   error: {
     status: '',
@@ -112,6 +120,12 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
       set((state) => ({ plant: { ...state.plant, nextFertilizing } })),
     onChangeNotificationTime: (notificationTime) =>
       set((state) => ({ plant: { ...state.plant, notificationTime } })),
+    onChangeNotificationDay: (notificationDay) =>
+      set((state) => ({
+        plant: { ...state.plant, notificationDay: Number(notificationDay) },
+      })),
+    onChangeNotificationInterval: (notificationInterval) =>
+      set((state) => ({ plant: { ...state.plant, notificationInterval } })),
 
     savePlant: (id) => {
       const {
@@ -124,7 +138,6 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
         notificationTime,
       } = get().plant
       if (!name || name === '') {
-        console.log('name ', get())
         set({
           error: {
             status: 'error',
@@ -213,6 +226,8 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           nextWatering: new Date().toISOString(),
           nextFertilizing: new Date().toISOString(),
           notificationTime: new Date(),
+          notificationDay: 0,
+          notificationInterval: N_INTERVAL.weekly,
         },
         error: {
           status: '',
