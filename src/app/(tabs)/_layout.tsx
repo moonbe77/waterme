@@ -48,6 +48,7 @@ export default function TabLayout() {
         options={{
           title: 'Feed',
           tabBarIcon: ({ color }) => <TabBarIcon name="leaf" color={color} />,
+
           headerRight: () => (
             <Link href="/create" asChild>
               <Pressable>

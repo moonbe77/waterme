@@ -6,18 +6,20 @@ export default function TabOneScreen() {
   const scheduleNotification = () => {
     schedulePushNotification({
       content: {
-        title: "You've got mail! 📬",
-        body: 'Here is the notification body',
-        data: { data: 'goes here' },
+        title: 'trigger every 15 days',
+        body: 'Here is the notification body ',
+        badge: 1,
+        sound: 'default',
+        subtitle: 'subtitle',
+        data: { data: 'goes here', url: '/feed' },
       },
-      trigger: null,
+      trigger: {
+        seconds: 15 * 24 * 60 * 60, // 15 days in seconds
+        repeats: true,
+      },
     }).then((res) => {
       console.log('schedulePushNotification ', res)
     })
-  }
-
-  const testeDrizzle = () => {
-    console.log('testeDrizzle')
   }
 
   return (
@@ -25,10 +27,6 @@ export default function TabOneScreen() {
       <View bg="$primary700" p="$10" borderRadius={15}>
         <Button onPress={scheduleNotification} variant="outlined">
           <ButtonText> set NOTIFICATION</ButtonText>
-        </Button>
-
-        <Button onPress={testeDrizzle} variant="outlined">
-          <ButtonText>Drizzle</ButtonText>
         </Button>
       </View>
       {/* <View style={styles.separator} /> */}

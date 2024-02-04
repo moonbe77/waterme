@@ -49,7 +49,15 @@ export function RootLayoutNav() {
   const { isLoaded } = useLoadAssets()
   useNotificationObserver()
 
-  const { notification, expoPushToken } = useNotification()
+  const { notification } = useNotification()
+
+  useEffect(() => {
+    if (notification) {
+      alert(
+        `${notification?.request.content.title} / ${notification?.request.content.body}`,
+      )
+    }
+  }, [notification])
 
   if (!isLoaded) return null
   return (

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { View, Button, Text } from 'tamagui'
+import { db } from '@/db/client'
 
 import * as Notifications from 'expo-notifications'
 import { getAllScheduledNotificationsAsync } from 'expo-notifications'
+import { plants } from '@/db/schema'
 
 function AppConfig() {
   const [permissions, setPermissions] = useState(false)
@@ -36,10 +38,17 @@ function AppConfig() {
     }
   }
 
+  const deleteAll = () => {
+    Notifications.cancelAllScheduledNotificationsAsync()
+
+    db.delete(plants).all()
+  }
+
   const getNotifications = () => {
     getAllScheduledNotificationsAsync()
       .then((res) => {
         console.log('getAllScheduledNotificationsAsync ', res)
+        // logNextTriggerDate()
         setScheduledNotifications(res)
       })
       .then((err) => {
@@ -59,6 +68,15 @@ function AppConfig() {
       )}
       <View>
         <Button
+          onPress={deleteAll}
+          size="$4"
+          width={200}
+          variant="outlined"
+          marginBottom="$10"
+        >
+          DROP ALL
+        </Button>
+        <Button
           onPress={getNotifications}
           size="$4"
           width={200}
@@ -73,6 +91,7 @@ function AppConfig() {
             <Text>{notification.content.title}</Text>
             <Text>{notification.content.body}</Text>
             <Text>{notification.trigger?.type}</Text>
+
             <Text></Text>
             <Button
               onPress={() => {

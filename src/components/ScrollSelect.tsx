@@ -18,8 +18,6 @@ const ScrollSelect = <TItem extends Item>({
 }) => {
   return (
     <View width="100%" overflow="scroll">
-      <Heading>Day of Week</Heading>
-
       <ScrollView horizontal py="$2">
         <XStack gap="$2" backgroundColor={'$blue100'}>
           {items.map((item, key) => (

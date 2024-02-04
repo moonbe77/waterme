@@ -92,7 +92,8 @@ export default function ModalScreen() {
               />
 
               <View>
-                <Text color="$blue10">Schedule Remainder</Text>
+                <Heading size="$3">Interval</Heading>
+
                 <ScrollSelect
                   items={calendarInterval}
                   onChange={(item) =>
@@ -100,12 +101,15 @@ export default function ModalScreen() {
                   }
                   selectedValue={plant.notificationInterval}
                 />
+                <Heading size="$3">Day of Week</Heading>
+                <ScrollSelect
+                  items={weekday}
+                  onChange={(item) =>
+                    actions.onChangeNotificationDay(item.value)
+                  }
+                  selectedValue={plant.notificationDay}
+                />
               </View>
-              <ScrollSelect
-                items={weekday}
-                onChange={(item) => actions.onChangeNotificationDay(item.value)}
-                selectedValue={plant.notificationDay}
-              />
 
               {/* 
 

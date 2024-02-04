@@ -15,6 +15,7 @@ import {
 import { usePlants, usePlantsActions } from '@/src/hooks/use-plants-store'
 import type { SelectPlants } from '@/db/schema'
 import tz from 'moment-timezone'
+import { useEffect } from 'react'
 
 const zone = 'Australia/Sydney'
 
@@ -34,14 +35,29 @@ const getCreatedTime = (date: string) => {
 }
 
 function Feed() {
-  // const router = useRouter()
-  // const navigation = useNavigation()
+  const navigation = useNavigation()
   // const [isLoading, setIsLoading] = React.useState(false)
   // const [info, setInfo] = React.useState<IPlant[]>([])
+
   const plants = usePlants()
   const actions = usePlantsActions()
 
+  // console.log('router ', { navigation })
   console.log('plants ', plants)
+
+  useEffect(() => {
+    // refetch if navigating to this screen
+    navigation.addListener('focus', () => {
+      actions.refetch()
+    })
+
+    // cleanup
+    return () => {
+      navigation.removeListener('focus', () => {
+        actions.refetch()
+      })
+    }
+  }, [navigation, actions])
 
   const handlePress = (id: number) => {
     // navigation.navigate('details', { slug: id })

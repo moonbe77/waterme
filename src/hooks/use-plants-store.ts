@@ -156,20 +156,27 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
 
       // convert notification time to local time using momentjs and then convert to ISO string
       const localeTime = moment(notificationTime).local().toISOString()
+      // add to current x amount of days
+      const nextWateringDate = moment(nextWatering).add(7, 'days')
 
+      const now = new Date()
+      now.setMinutes(now.getMinutes() + 2)
+      const plant = get().plant
+      // calculate how many hours from now to the next watering date
       schedulePushNotification({
         content: {
           title: 'Watering time! 🌹',
           body: `Don't forget to water ${name}`,
-          data: { data: get().plant },
+          data: { data: plant },
         },
         trigger: {
           repeats: true,
-          weekday: 3,
-          hour: 10,
-          minute: 0,
-          second: 0,
-          timezone: 'sydney/Australia',
+          // weekday: plant.notificationDay,
+          hour: nextWateringDate.hour(), // get this from config
+          // minute: now.getMinutes(), // get this from config
+          // second: 0,
+          // timezone: 'sydney/Australia', // this should be dynamic based on user location
+          // weekOfMonth: 2,
         },
       })
         .then((res) => {
