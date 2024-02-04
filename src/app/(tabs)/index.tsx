@@ -1,31 +1,40 @@
 import { StyleSheet } from 'react-native'
 import { Button, ButtonText, View } from 'tamagui'
-import { schedulePushNotification } from '@/src/service/pushNotifications'
+import { scheduleNotification } from '@/src/service/notifications'
 
 export default function TabOneScreen() {
-  const scheduleNotification = () => {
-    schedulePushNotification({
-      content: {
-        title: 'trigger every 15 days',
-        body: 'Here is the notification body ',
-        badge: 1,
-        sound: 'default',
-        subtitle: 'subtitle',
-        data: { data: 'goes here', url: '/feed' },
-      },
-      trigger: {
-        seconds: 15 * 24 * 60 * 60, // 15 days in seconds
-        repeats: true,
-      },
+  const testNotification = () => {
+    // schedulePushNotification({
+    //   content: {
+    //     title: 'trigger every 15 days',
+    //     body: 'Here is the notification body ',
+    //     badge: 1,
+    //     sound: 'default',
+    //     subtitle: 'subtitle',
+    //     data: { data: 'goes here', url: '/feed' },
+    //   },
+    //   trigger: {
+    //     seconds: 15 * 24 * 60 * 60, // 15 days in seconds
+    //     repeats: true,
+    //   },
+    // }).then((res) => {
+    //   console.log('schedulePushNotification ', res)
+    // })
+
+    scheduleNotification(1, {
+      title: 'trigger every 1 day',
+      body: 'Here is the notification body ',
+      subtitle: 'subtitle TEST ',
+      data: { data: 'goes here', url: '/feed' },
     }).then((res) => {
-      console.log('schedulePushNotification ', res)
+      console.log('scheduleNotification ', res)
     })
   }
 
   return (
     <View style={styles.container}>
       <View bg="$primary700" p="$10" borderRadius={15}>
-        <Button onPress={scheduleNotification} variant="outlined">
+        <Button onPress={testNotification} variant="outlined">
           <ButtonText> set NOTIFICATION</ButtonText>
         </Button>
       </View>

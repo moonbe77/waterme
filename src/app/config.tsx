@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View, Button, Text } from 'tamagui'
+import { View, Button, Text, ScrollView } from 'tamagui'
 import { db } from '@/db/client'
 
 import * as Notifications from 'expo-notifications'
@@ -48,7 +48,9 @@ function AppConfig() {
     getAllScheduledNotificationsAsync()
       .then((res) => {
         console.log('getAllScheduledNotificationsAsync ', res)
-        // logNextTriggerDate()
+        // res.forEach((notification) => {
+        // logNextTriggerDate(notification.trigger.type === 'calendar' ? notification.trigger : null)
+        // })
         setScheduledNotifications(res)
       })
       .then((err) => {
@@ -56,23 +58,39 @@ function AppConfig() {
       })
   }
 
+  const getTimeNext = (notification: Notifications.NotificationRequest) => {
+    if (notification.trigger?.type === 'timeInterval') {
+      const seconds = notification.trigger.seconds
+      const date = new Date()
+      date.setSeconds(date.getSeconds() + seconds)
+      return `next trigger: ${date.toLocaleString()}`
+    }
+    if (notification.trigger?.type === 'calendar') {
+      const date = notification.trigger.dateComponents
+      logNextTriggerDate(notification.trigger)
+      return `type calendar: ${date?.hour}:${date?.minute} ${date?.day}/${date?.month}/${date?.year}`
+    }
+  }
+
   return (
-    <View>
-      <Text>config</Text>
-      <Text>
-        Notifications:{' '}
-        {permissions ? <Text>allowed</Text> : <Text>not allowed</Text>}
-      </Text>
-      {notificationError && (
-        <Text color="$red">Notification permission Error</Text>
-      )}
+    <View p="$4" height="100%" backgroundColor="$blue1">
+      <View backgroundColor="red">
+        <Text>config</Text>
+        <Text>
+          Notifications:{' '}
+          {permissions ? <Text>allowed</Text> : <Text>not allowed</Text>}
+        </Text>
+        {notificationError && (
+          <Text color="$red">Notification permission Error</Text>
+        )}
+      </View>
       <View>
         <Button
           onPress={deleteAll}
           size="$4"
           width={200}
           variant="outlined"
-          marginBottom="$10"
+          marginBottom="$2"
         >
           DROP ALL
         </Button>
@@ -85,6 +103,12 @@ function AppConfig() {
         >
           log NOTIFICATION
         </Button>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        backgroundColor={'$blue100'}
+      >
         {scheduledNotifications.map((notification) => (
           <View key={notification.identifier} marginBottom="$10">
             <Text>{notification.identifier}</Text>
@@ -92,7 +116,7 @@ function AppConfig() {
             <Text>{notification.content.body}</Text>
             <Text>{notification.trigger?.type}</Text>
 
-            <Text></Text>
+            <Text>{getTimeNext(notification)}</Text>
             <Button
               onPress={() => {
                 Notifications.cancelScheduledNotificationAsync(
@@ -106,7 +130,7 @@ function AppConfig() {
             </Button>
           </View>
         ))}
-      </View>
+      </ScrollView>
     </View>
   )
 }
