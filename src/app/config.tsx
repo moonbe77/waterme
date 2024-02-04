@@ -4,7 +4,7 @@ import { db } from '@/db/client'
 
 import * as Notifications from 'expo-notifications'
 import { getAllScheduledNotificationsAsync } from 'expo-notifications'
-import { plants } from '@/db/schema'
+import { plants, notifications } from '@/db/schema'
 
 function AppConfig() {
   const [permissions, setPermissions] = useState(false)
@@ -42,15 +42,13 @@ function AppConfig() {
     Notifications.cancelAllScheduledNotificationsAsync()
 
     db.delete(plants).all()
+    db.delete(notifications).all()
   }
 
   const getNotifications = () => {
     getAllScheduledNotificationsAsync()
       .then((res) => {
         console.log('getAllScheduledNotificationsAsync ', res)
-        // res.forEach((notification) => {
-        // logNextTriggerDate(notification.trigger.type === 'calendar' ? notification.trigger : null)
-        // })
         setScheduledNotifications(res)
       })
       .then((err) => {
@@ -59,11 +57,13 @@ function AppConfig() {
   }
 
   const getTimeNext = (notification: Notifications.NotificationRequest) => {
+    const data = notification.content.data
+    console.log('notification.content.data', data)
     if (notification.trigger?.type === 'timeInterval') {
       const seconds = notification.trigger.seconds
       const date = new Date()
-      date.setSeconds(date.getSeconds() + seconds)
-      return `next trigger: ${date.toLocaleString()}`
+      date.setSeconds(seconds - date.getSeconds())
+      return `next trigger: ${seconds}  /  ${date}`
     }
     if (notification.trigger?.type === 'calendar') {
       const date = notification.trigger.dateComponents

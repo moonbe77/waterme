@@ -32,20 +32,20 @@ import ScrollSelect from '../components/ScrollSelect'
 import { weekday } from '../config/constants'
 import { N_INTERVAL } from '../models/types'
 
-type CalInterval = {
-  label: string
-  value: N_INTERVAL
-}
+// type CalInterval = {
+//   label: string
+//   value: N_INTERVAL
+// }
 
-const calendarInterval: CalInterval[] = [
-  { label: 'Daily', value: N_INTERVAL.daily },
-  { label: 'Weekly', value: N_INTERVAL.weekly },
-  { label: 'Monthly', value: N_INTERVAL.monthly },
-  { label: 'Yearly', value: N_INTERVAL.yearly },
-]
+// const calendarInterval: CalInterval[] = [
+//   { label: 'Daily', value: N_INTERVAL.daily },
+//   { label: 'Weekly', value: N_INTERVAL.weekly },
+//   { label: 'Monthly', value: N_INTERVAL.monthly },
+//   { label: 'Yearly', value: N_INTERVAL.yearly },
+// ]
 
 export default function ModalScreen() {
-  const navigation = useNavigation()
+  // const navigation = useNavigation()
   const plant = useEditPlant()
   const actions = useEditPlantActions()
   const error = useEditPlantError()
@@ -53,7 +53,7 @@ export default function ModalScreen() {
   const addPlant = () => {
     // TODO: create unique id
     const id = Math.random().toString(36).substr(2, 9)
-    console.log({ plant, id })
+    console.log('ADD PLANT', { plant, id })
     actions.savePlant(id)
   }
 
@@ -77,7 +77,7 @@ export default function ModalScreen() {
                 size="$5"
                 placeholder="Name / Title"
                 // onChangeText={(value) => handleChange('name', value)}
-                onChangeText={actions.onChangeName}
+                onChangeText={(value) => actions.onChange('name', value)}
                 value={plant.name}
                 width="100%"
               />
@@ -86,18 +86,30 @@ export default function ModalScreen() {
                 id="description"
                 size="$6"
                 placeholder="Description"
-                onChangeText={actions.onChangeDescription}
-                value={plant.description}
+                rows={4}
+                onChangeText={(value) => actions.onChange('description', value)}
+                value={plant.description ?? ''}
+                width="100%"
+              />
+              <Input
+                id="notificationInterval"
+                size="$6"
+                placeholder="Notification Interval in days"
+                inputMode="numeric"
+                onChangeText={(value) =>
+                  actions.onChange('notificationInterval', value)
+                }
+                value={plant.notificationInterval ?? ''}
                 width="100%"
               />
 
-              <View>
+              {/* <View>
                 <Heading size="$3">Interval</Heading>
 
                 <ScrollSelect
                   items={calendarInterval}
                   onChange={(item) =>
-                    actions.onChangeNotificationInterval(`${item.value}`)
+                    actions.onChange('notificationInterval', `${item.value}`)
                   }
                   selectedValue={plant.notificationInterval}
                 />
@@ -105,11 +117,11 @@ export default function ModalScreen() {
                 <ScrollSelect
                   items={weekday}
                   onChange={(item) =>
-                    actions.onChangeNotificationDay(item.value)
+                    actions.onChange('notificationDay', item.value)
                   }
                   selectedValue={plant.notificationDay}
                 />
-              </View>
+              </View> */}
 
               {/* 
 

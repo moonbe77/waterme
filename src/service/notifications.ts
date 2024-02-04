@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications'
 import { Platform } from 'react-native'
 
 export async function scheduleNotification(
-  days: number,
+  days: number | string = 15,
   {
     title,
     body,
@@ -30,7 +30,7 @@ export async function scheduleNotification(
   const nextTriggerDate = new Date(now)
   if (now.getHours() >= 10) {
     // If it's already past 10 AM, set the date to the next day
-    nextTriggerDate.setDate(nextTriggerDate.getDate() + days)
+    nextTriggerDate.setDate(nextTriggerDate.getDate() + Number(days))
   }
 
   nextTriggerDate.setHours(10, 0, 0, 0) // Set time to 10 AM
@@ -60,3 +60,9 @@ export async function scheduleNotification(
 
 // Don't forget to call this function in your app
 // scheduleNotification()
+
+export const getNotification = async (id: string) => {
+  return await Notifications.getAllScheduledNotificationsAsync().then((res) => {
+    return res.find((n) => n.identifier === id)
+  })
+}

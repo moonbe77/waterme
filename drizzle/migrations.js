@@ -6,6 +6,8 @@ import m0001 from './0001_flippant_whizzer.sql';
 import m0002 from './0002_grey_jack_flag.sql';
 import m0003 from './0003_previous_trish_tilby.sql';
 import m0004 from './0004_peaceful_medusa.sql';
+import m0005 from './0005_low_loners.sql';
+import m0006 from './0006_many_sentry.sql';
 
   export default {
     journal,
@@ -14,7 +16,9 @@ import m0004 from './0004_peaceful_medusa.sql';
 m0001,
 m0002,
 m0003,
-m0004
+m0004,
+m0005,
+m0006
     }
   }
   

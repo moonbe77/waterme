@@ -36,6 +36,20 @@
       "when": 1706814774623,
       "tag": "0004_peaceful_medusa",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1707078968659,
+      "tag": "0005_low_loners",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1707079026958,
+      "tag": "0006_many_sentry",
+      "breakpoints": true
     }
   ]
 }

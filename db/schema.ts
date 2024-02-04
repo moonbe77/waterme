@@ -13,7 +13,7 @@ export const notes = sqliteTable('notes', {
 })
 
 export const plants = sqliteTable('plants', {
-  id: integer('id').primaryKey(),
+  id: text('id').primaryKey(),
   name: text('name').notNull(),
   description: text('description'),
   nextWatering: text('next_watering'),
@@ -23,6 +23,7 @@ export const plants = sqliteTable('plants', {
   notificationTime: text('notification_time'),
   notificationDay: text('notification_day'),
   notificationInterval: text('notification_interval'),
+  notificationId: text('notification_id'),
   type: text('type'),
   plantName: text('plant_name'),
   createdAt: text('created_at')
@@ -33,8 +34,6 @@ export const plants = sqliteTable('plants', {
 
 export const notifications = sqliteTable('notifications', {
   id: text('id').primaryKey(),
-  title: text('title'),
-  body: text('body'),
   createdAt: text('created_at')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -44,5 +43,5 @@ export const notifications = sqliteTable('notifications', {
 })
 
 export type SelectNote = typeof notes.$inferSelect
-export type SelectPlants = typeof plants.$inferSelect
+export type Plant = typeof plants.$inferSelect
 export type SelectNotifications = typeof notifications.$inferSelect

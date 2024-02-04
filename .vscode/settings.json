@@ -2,6 +2,8 @@
   "cSpell.words": [
 		"Gluestack",
 		"Pressable",
-		"Tamagui"
+		"Schedulable",
+		"Tamagui",
+		"zustand"
 	]
 }

@@ -1,16 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { db } from '@/db/client'
-import {
-  plants,
-  notifications,
-  type SelectNotifications,
-  type SelectPlants,
-} from '@/db/schema'
+import { plants, notifications, type Plant } from '@/db/schema'
 import { desc } from 'drizzle-orm'
 import moment from 'moment'
 import { create } from 'zustand'
-import { schedulePushNotification } from '../service/pushNotifications'
-import { N_INTERVAL } from '../models/types'
+
+import { router } from 'expo-router'
+import { scheduleNotification } from '../service/notifications'
 
 type SearchStore = {
   searchText: string
@@ -30,7 +26,7 @@ export const useSearchText = () => useSearchStore((state) => state.searchText)
 export const useSearchActions = () => useSearchStore((state) => state.actions)
 
 type PlantsStore = {
-  plants: SelectPlants[]
+  plants: Plant[]
   actions: {
     refetch: () => void
   }
@@ -58,32 +54,24 @@ const usePlantsStore = create<PlantsStore>((set) => {
 export const usePlants = () => usePlantsStore((state) => state.plants)
 export const usePlantsActions = () => usePlantsStore((state) => state.actions)
 
+type EditPlant = Omit<Plant, 'createdAt' | 'id'>
 type EditPlantStore = {
-  plant: {
-    name: string
-    description: string
-    type: string
-    plantName: string
-    nextWatering: string
-    nextFertilizing: string
-    notificationTime: Date
-    notificationDay: number
-    notificationInterval: string
-  }
+  plant: EditPlant
   error: {
     status: string
     message: string
   }
   actions: {
-    onChangeName: (name: string) => void
-    onChangeDescription: (body: string) => void
-    onChangeType: (type: string) => void
-    onChangePlantName: (plantName: string) => void
-    onChangeNextWatering: (nextWatering: string) => void
-    onChangeNextFertilizing: (nextFertilizing: string) => void
-    onChangeNotificationTime: (notificationTime: Date) => void
-    onChangeNotificationDay: (notificationDay: number | string) => void
-    onChangeNotificationInterval: (notificationInterval: string) => void
+    onChange: (prop: keyof Plant, value: unknown) => void
+    // onChangeName: (name: string) => void
+    // onChangeDescription: (body: string) => void
+    // onChangeType: (type: string) => void
+    // onChangePlantName: (plantName: string) => void
+    // onChangeNextWatering: (nextWatering: string) => void
+    // onChangeNextFertilizing: (nextFertilizing: string) => void
+    // onChangeNotificationTime: (notificationTime: Date) => void
+    // onChangeNotificationDay: (notificationDay: number | string) => void
+    // onChangeNotificationInterval: (notificationInterval: string) => void
     savePlant: (id: string) => void
     // deleteNote: (id: string) => void
   }
@@ -97,35 +85,47 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
     plantName: '',
     nextWatering: '',
     nextFertilizing: '',
-    notificationTime: new Date(),
-    notificationDay: 0,
-    notificationInterval: N_INTERVAL.weekly,
+    notificationTime: '',
+    notificationDay: '0',
+    notificationInterval: '1',
+    lastFertilizing: '',
+    lastWatering: '',
+    updatedAt: '',
+    notificationId: '',
   },
   error: {
     status: '',
     message: '',
   },
   actions: {
-    onChangeName: (name) =>
-      set((state) => ({ plant: { ...state.plant, name } })),
-    onChangeDescription: (description) =>
-      set((state) => ({ plant: { ...state.plant, description } })),
-    onChangeType: (type) =>
-      set((state) => ({ plant: { ...state.plant, type } })),
-    onChangePlantName: (plantName) =>
-      set((state) => ({ plant: { ...state.plant, plantName } })),
-    onChangeNextWatering: (nextWatering) =>
-      set((state) => ({ plant: { ...state.plant, nextWatering } })),
-    onChangeNextFertilizing: (nextFertilizing) =>
-      set((state) => ({ plant: { ...state.plant, nextFertilizing } })),
-    onChangeNotificationTime: (notificationTime) =>
-      set((state) => ({ plant: { ...state.plant, notificationTime } })),
-    onChangeNotificationDay: (notificationDay) =>
-      set((state) => ({
-        plant: { ...state.plant, notificationDay: Number(notificationDay) },
-      })),
-    onChangeNotificationInterval: (notificationInterval) =>
-      set((state) => ({ plant: { ...state.plant, notificationInterval } })),
+    onChange: (prop: keyof Plant, value: any) => {
+      set({
+        plant: {
+          ...get().plant,
+          [prop]: value,
+        },
+      })
+    },
+    // onChangeName: (name) =>
+    //   set((state) => ({ plant: { ...state.plant, name } })),
+    // onChangeDescription: (description) =>
+    //   set((state) => ({ plant: { ...state.plant, description } })),
+    // onChangeType: (type) =>
+    //   set((state) => ({ plant: { ...state.plant, type } })),
+    // onChangePlantName: (plantName) =>
+    //   set((state) => ({ plant: { ...state.plant, plantName } })),
+    // onChangeNextWatering: (nextWatering) =>
+    //   set((state) => ({ plant: { ...state.plant, nextWatering } })),
+    // onChangeNextFertilizing: (nextFertilizing) =>
+    //   set((state) => ({ plant: { ...state.plant, nextFertilizing } })),
+    // onChangeNotificationTime: (notificationTime) =>
+    //   set((state) => ({ plant: { ...state.plant, notificationTime } })),
+    // onChangeNotificationDay: (notificationDay) =>
+    //   set((state) => ({
+    //     plant: { ...state.plant, notificationDay: Number(notificationDay) },
+    //   })),
+    // onChangeNotificationInterval: (notificationInterval) =>
+    //   set((state) => ({ plant: { ...state.plant, notificationInterval } })),
 
     savePlant: (id) => {
       const {
@@ -136,7 +136,9 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
         nextWatering,
         nextFertilizing,
         notificationTime,
+        notificationInterval,
       } = get().plant
+
       if (!name || name === '') {
         set({
           error: {
@@ -153,51 +155,73 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           },
         })
       }
+      if (!notificationInterval || notificationInterval === '') {
+        set({
+          error: {
+            status: 'error',
+            message: 'Please enter notification interval',
+          },
+        })
+        return
+      } else {
+        set({
+          error: {
+            status: '',
+            message: '',
+          },
+        })
+      }
 
       // convert notification time to local time using momentjs and then convert to ISO string
       const localeTime = moment(notificationTime).local().toISOString()
       // add to current x amount of days
-      const nextWateringDate = moment(nextWatering).add(7, 'days')
+      const nextWateringDate = moment(nextWatering).add(
+        notificationInterval,
+        'days',
+      )
 
-      const now = new Date()
-      now.setMinutes(now.getMinutes() + 2)
       const plant = get().plant
+
       // calculate how many hours from now to the next watering date
-      schedulePushNotification({
-        content: {
-          title: 'Watering time! 🌹',
-          body: `Don't forget to water ${name}`,
-          data: { data: plant },
-        },
-        trigger: {
-          repeats: true,
-          // weekday: plant.notificationDay,
-          hour: nextWateringDate.hour(), // get this from config
-          // minute: now.getMinutes(), // get this from config
-          // second: 0,
-          // timezone: 'sydney/Australia', // this should be dynamic based on user location
-          // weekOfMonth: 2,
-        },
+      scheduleNotification(notificationInterval, {
+        title: 'Watering time! 🌹',
+        body: `Don't forget to water ${name}`,
+        data: { data: plant },
       })
         .then((res) => {
           console.log('schedulePushNotification ', res)
+          if (!res) {
+            set({
+              error: {
+                status: 'error',
+                message: 'Failed to schedule notification',
+              },
+            })
+            return
+          }
 
           db.insert(plants)
             .values({
-              id: Number(id),
+              id: res,
               name,
               description,
-              type,
-              plantName,
-              nextWatering,
-              nextFertilizing,
-              notificationTime: localeTime,
+              updatedAt: new Date().toISOString(),
+              notificationInterval: notificationInterval,
+              notificationId: res,
+              // type,
+              // plantName,
+              // nextWatering,
+              // nextFertilizing,
+              // notificationTime: localeTime,
+              // notificationDay: '0',
+              // lastWatering: '',
+              // lastFertilizing: '',
             })
             .then((res) => {
-              console.log('insert notification ', res)
+              console.log('insert plant ', res)
             })
             .catch((err) => {
-              console.log('insert notification err', err)
+              console.log('insert plant err', err)
             })
           // .onConflictDoUpdate({
           //   target: plants.id,
@@ -208,10 +232,8 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           db.insert(notifications)
             .values({
               id: res,
-              title: 'Watering time! 🌹',
-              body: `Don't forget to water ${name}`,
               notif_id: res,
-              plant_id: id,
+              plant_id: res,
             })
             .then((res) => {
               console.log('insert notification ', res)
@@ -223,6 +245,9 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
         .catch((err) => {
           console.log('schedulePushNotification err', err)
         })
+        .finally(() => {
+          router.back()
+        })
 
       set({
         plant: {
@@ -230,11 +255,15 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           description: '',
           type: '',
           plantName: '',
-          nextWatering: new Date().toISOString(),
-          nextFertilizing: new Date().toISOString(),
-          notificationTime: new Date(),
-          notificationDay: 0,
-          notificationInterval: N_INTERVAL.weekly,
+          nextWatering: '',
+          nextFertilizing: '',
+          notificationTime: '',
+          notificationDay: '0',
+          notificationInterval: '1',
+          lastWatering: '',
+          lastFertilizing: '',
+          updatedAt: '',
+          notificationId: '',
         },
         error: {
           status: '',
