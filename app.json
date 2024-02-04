@@ -1,8 +1,11 @@
 {
   "expo": {
+    "owner": "moonbe77",
     "name": "waterme",
     "slug": "waterme",
+    "scheme": "waterme",
     "version": "1.0.0",
+    "plugins": ["expo-router", "expo-build-properties"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,9 +34,6 @@
         "projectId": "7354473c-f17b-4ce3-a9f9-5c827e530d1d"
       }
     },
-    "owner": "moonbe77",
-    "plugins": ["expo-router", "expo-build-properties"],
-    "scheme": "waterme",
     "experiments": {
       "typedRoutes": true
     }
