@@ -6,13 +6,14 @@
     "scheme": "waterme",
     "version": "1.0.0",
     "plugins": ["expo-router", "expo-build-properties"],
+		"platforms": ["ios"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#256235"
+      "backgroundColor": "#fff"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -27,7 +28,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+			"output": "static"
+
     },
     "extra": {
       "eas": {

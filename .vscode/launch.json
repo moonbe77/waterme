@@ -1,0 +1,16 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		
+		{
+			"type": "expo",
+			"request": "attach",
+			"name": "Expo",
+			"url": "exp+waterme://expo-development-client/?url=http%3A%2F%2F192.168.1.104%3A8081",
+			"webRoot": "${workspaceFolder}"
+		}
+	]
+}
