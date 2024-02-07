@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native'
-import { schedulePushNotification } from '../service/pushNotifications'
+import useSetNotification from '@/src/service/useSetNotification'
 
 import {
   Input,
@@ -45,16 +45,37 @@ import { N_INTERVAL } from '../models/types'
 // ]
 
 export default function ModalScreen() {
-  // const navigation = useNavigation()
+  const navigation = useNavigation()
   const plant = useEditPlant()
   const actions = useEditPlantActions()
-  const error = useEditPlantError()
+  // const error = useEditPlantError()
+  const { mutate, error } = useSetNotification()
 
   const addPlant = () => {
-    // TODO: create unique id
-    const id = Math.random().toString(36).substr(2, 9)
-    console.log('ADD PLANT', { plant, id })
-    actions.savePlant(id)
+    // TODO: create unique id ATM USING THE NOTIFICATION ID
+    // const id = Math.random().toString(36).substr(2, 9)
+
+    mutate(
+      {
+        days: Number(plant.notificationInterval),
+        time: {
+          hours: 10,
+          minutes: 0,
+        },
+        title: plant.name,
+        body: plant.description ?? 'Here is the notification body ',
+        subtitle: 'subtitle TEST ',
+        data: { data: 'goes here', url: '/feed' },
+      },
+      {
+        onSuccess: (data) => {
+          // IF SUCCESS SAVE TO DB
+          console.log('notification created', data)
+          actions.savePlant(data)
+          navigation.goBack()
+        },
+      },
+    )
   }
 
   return (
@@ -123,7 +144,7 @@ export default function ModalScreen() {
                 />
               </View> */}
 
-              {/* 
+              {/*
 
                 <Input
                   id="waterInterval"

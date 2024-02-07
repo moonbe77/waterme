@@ -5,9 +5,9 @@ import type { SetNotificationProps } from './useSetNotification'
 
 export async function scheduleNotification(data: SetNotificationProps) {
   // Request permissions first
-  if (data.days < 1 || Number.isNaN(data.days)) {
-    throw new Error('Invalid days interval')
-  }
+  // if (data.days < 1 || Number.isNaN(data.days)) {
+  //   throw new Error('Invalid days interval')
+  // }
   const { status } = await Notifications.requestPermissionsAsync()
 
   if (status !== 'granted') {
@@ -15,17 +15,14 @@ export async function scheduleNotification(data: SetNotificationProps) {
   }
 
   // Calculate the trigger in seconds for Android and as a Date object for iOS
-  const seconds = secondsUntilTime(data.days, 10)
-  const trigger =
-    Platform.OS === 'android'
-      ? seconds
-      : {
-          repeats: true,
-          seconds: seconds, // iOS can use a Date object
-          // interval: 'day', // Custom handling may be needed to achieve the exact 15 days interval
-        }
+  const seconds = secondsUntilTime(data.days, data.time)
+  const trigger: Notifications.NotificationTriggerInput = {
+    repeats: true,
+    seconds: seconds,
+    timezone: 'Sydney/Australia',
+  }
 
-  console.log('trigger', trigger)
+  console.log('trigger', { data, trigger })
 
   return Notifications.scheduleNotificationAsync({
     content: {
@@ -94,7 +91,13 @@ export const getNextTriggerDate = async (
   // }
 }
 
-function secondsUntilTime(intervalInDays: number, timeOfDay: number) {
+function secondsUntilTime(
+  intervalInDays: number,
+  timeOfDay: {
+    hours: number
+    minutes: number
+  },
+) {
   // Get current date
   const currentDate = moment().startOf('day')
 
@@ -102,8 +105,8 @@ function secondsUntilTime(intervalInDays: number, timeOfDay: number) {
   const targetDate = currentDate.clone().add(intervalInDays, 'days')
 
   // Parse time of day and set it on targetDate
-  // const [hours, minutes, seconds] = timeOfDay.split(':').map(Number)
-  targetDate.set({ hours: timeOfDay, minutes: 0, seconds: 0 })
+  const { hours, minutes } = timeOfDay
+  targetDate.set({ hours, minutes })
 
   // Calculate difference in seconds
   const secondsUntilTarget = targetDate.diff(moment(), 'seconds')

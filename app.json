@@ -18,7 +18,13 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bmunz.waterme"
+      "bundleIdentifier": "com.bmunz.waterme",
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "remote-notification", "notification"],
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to provide you with the best experience.",
+        "NSLocationAlwaysUsageDescription": "This app uses your location to provide you with the best experience.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses your location to provide you with the best experience."
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -1,10 +1,8 @@
-import { useFonts, Inter_900Black } from '@expo-google-fonts/inter'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect } from 'react'
 
 export { ErrorBoundary } from 'expo-router'
-
+// Create a client
 function DetailsLayout() {
   return (
     <Stack>

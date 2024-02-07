@@ -30,7 +30,10 @@ function useNotification() {
     }
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
+        // Listeners registered by this method will be called whenever a user interacts with a notification (for example, taps on it).
+        // https://docs.expo.dev/versions/latest/sdk/notifications/#addnotificationresponsereceivedlistenerlistener
         console.log('addNotificationResponseReceivedListener', response)
+
         if (!isMounted || !response?.notification) {
           return
         }

@@ -1,33 +1,23 @@
 import { StyleSheet } from 'react-native'
 import { Button, ButtonText, View } from 'tamagui'
-import { scheduleNotification } from '@/src/service/notifications'
+import useSetNotification from '@/src/service/useSetNotification'
 
 export default function TabOneScreen() {
+  const { mutate } = useSetNotification()
   const testNotification = () => {
-    // schedulePushNotification({
-    //   content: {
-    //     title: 'trigger every 15 days',
-    //     body: 'Here is the notification body ',
-    //     badge: 1,
-    //     sound: 'default',
-    //     subtitle: 'subtitle',
-    //     data: { data: 'goes here', url: '/feed' },
-    //   },
-    //   trigger: {
-    //     seconds: 15 * 24 * 60 * 60, // 15 days in seconds
-    //     repeats: true,
-    //   },
-    // }).then((res) => {
-    //   console.log('schedulePushNotification ', res)
-    // })
+    const nowHour = new Date().getHours()
+    const nowMinute = new Date().getMinutes() + 1
 
-    scheduleNotification(1, {
-      title: 'trigger every 1 day',
+    mutate({
+      days: 0,
+      time: {
+        hours: nowHour,
+        minutes: nowMinute,
+      },
+      title: 'TEST log NOTIFICATION',
       body: 'Here is the notification body ',
       subtitle: 'subtitle TEST ',
       data: { data: 'goes here', url: '/feed' },
-    }).then((res) => {
-      console.log('scheduleNotification ', res)
     })
   }
 

@@ -15,7 +15,7 @@ import {
 import { usePlants, usePlantsActions } from '@/src/hooks/use-plants-store'
 import type { Plant } from '@/db/schema'
 import tz from 'moment-timezone'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   getNextTriggerDate,
   getNotificationById,
@@ -105,12 +105,11 @@ const Item = ({
 }) => {
   const [notification, setNotification] = useState<
     NotificationRequest | undefined
-  >(undefined)
+  >()
   const [next, setNext] = useState<Date | undefined>()
   useEffect(() => {
     getNotificationById(item.id).then((res) => {
       setNotification(res)
-      return null
     })
   }, [item.id])
 
@@ -129,7 +128,7 @@ const Item = ({
   const onPress = async (id: string) => {
     if (!notification) return
     const test = await getNextTriggerDate(notification)
-    console.log('test', UTCtoSyd(test ?? new Date()))
+    console.log('test', test?.toISOString())
   }
 
   return (
