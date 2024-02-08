@@ -18,7 +18,7 @@ export async function scheduleNotification(data: SetNotificationProps) {
   const seconds = secondsUntilTime(data.days, data.time)
   const trigger: Notifications.NotificationTriggerInput = {
     repeats: true,
-    seconds: seconds,
+    second: seconds,
     timezone: 'Sydney/Australia',
   }
 
