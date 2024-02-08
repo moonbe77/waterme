@@ -6,13 +6,13 @@ export default function TabOneScreen() {
   const { mutate } = useSetNotification()
   const testNotification = () => {
     const nowHour = new Date().getHours()
-    const nowMinute = new Date().getMinutes() + 1
+    const nowMinute = new Date().getMinutes() + 15
 
     mutate({
       days: 0,
       time: {
-        hours: nowHour,
-        minutes: nowMinute,
+        hours: 9,
+        minutes: 30,
       },
       title: 'TEST log NOTIFICATION',
       body: 'Here is the notification body ',
