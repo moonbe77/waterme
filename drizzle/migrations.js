@@ -8,6 +8,7 @@ import m0003 from './0003_previous_trish_tilby.sql';
 import m0004 from './0004_peaceful_medusa.sql';
 import m0005 from './0005_low_loners.sql';
 import m0006 from './0006_many_sentry.sql';
+import m0007 from './0007_silly_the_renegades.sql';
 
   export default {
     journal,
@@ -18,7 +19,8 @@ m0002,
 m0003,
 m0004,
 m0005,
-m0006
+m0006,
+m0007
     }
   }
   

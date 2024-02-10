@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { scheduleNotification } from './scheduleCustomNotification'
+import { Alert } from 'react-native'
 
 export interface SetNotificationProps {
   days: number
@@ -22,11 +23,16 @@ function useSetNotification() {
     //   // return { oldNotification: null }
     // },
     onSuccess: (data, variables, context) => {
+      Alert.alert(
+        'Notification set',
+        `Notification set for ${variables.days} days`,
+      )
       // The mutation was successful!
       // Optionally return a context containing data to use when updating the cache
-      console.log({ variables, data })
+      // console.log({ variables, data })
     },
     onError: (error, variables, context) => {
+      Alert.alert('Error', error.message)
       // The mutation failed!
       // Optionally return a context containing data to use when rolling back
     },

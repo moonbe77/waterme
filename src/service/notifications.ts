@@ -57,21 +57,20 @@ export const cancelNotification = async (id: string) => {
 export const getNextTriggerDate = async (
   notification: Notifications.NotificationRequest,
 ) => {
-  const data = notification.content.data
-  console.log('notification.content.data', data)
+  console.log('getNextTriggerDate > notification', notification)
 
   if (notification.trigger?.type === 'timeInterval') {
     const next = await Notifications.getNextTriggerDateAsync({
       seconds: notification.trigger.seconds,
     })
-    // .then((res) => {
-    //   console.log('NEXT ✅', res)
-    //   return res
-    // })
-    // .catch((error) => {
-    //   console.log('NEXT ERROR ❌', error)
-    //   return error
-    // })
+      .then((res) => {
+        console.log('NEXT ✅', res)
+        return res
+      })
+      .catch((error) => {
+        console.log('NEXT ERROR ❌', error)
+        return error
+      })
 
     // const seconds = notification.trigger.seconds
     const date = new Date(next ?? 0)
@@ -79,19 +78,19 @@ export const getNextTriggerDate = async (
     return date
   }
 
-  // if (notification.trigger?.type === 'calendar') {
-  //   Notifications.getNextTriggerDateAsync(notification.trigger)
-  //     .then((res) => {
-  //       console.log('NEXT CALENDAR ✅', res)
-  //       // return res?.toLocaleString()
-  //     })
-  //     .catch((error) => {
-  //       console.log('NEXT  CALENDAR  ERROR ❌', error)
-  //       // return error
-  //     })
+  if (notification.trigger?.type === 'calendar') {
+    Notifications.getNextTriggerDateAsync(notification.trigger)
+      .then((res) => {
+        console.log('NEXT CALENDAR ✅', res)
+        // return res?.toLocaleString()
+      })
+      .catch((error) => {
+        console.log('NEXT  CALENDAR  ERROR ❌', error)
+        // return error
+      })
 
-  //   return `type calendar:`
-  // }
+    return `type calendar:`
+  }
 }
 
 function secondsUntilTime(intervalInDays: number, timeOfDay: number) {

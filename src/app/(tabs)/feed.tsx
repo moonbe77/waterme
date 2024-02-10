@@ -117,7 +117,11 @@ const Item = ({
     if (!notification) return
     getNextTriggerDate(notification)
       .then((res) => {
-        setNext(res)
+        if (typeof res === 'object' && 'toISOString' in res) {
+          setNext(res)
+        } else {
+          setNext(undefined)
+        }
       })
       .catch((error) => {
         alert('Error getting next date')
@@ -128,7 +132,7 @@ const Item = ({
   const onPress = async (id: string) => {
     if (!notification) return
     const test = await getNextTriggerDate(notification)
-    console.log('test', test?.toISOString())
+    console.log('getNextTriggerDate', test)
   }
 
   return (

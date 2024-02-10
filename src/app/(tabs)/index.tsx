@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native'
-import { Button, ButtonText, View } from 'tamagui'
+import { Button, ButtonText, View, Text } from 'tamagui'
 import useSetNotification from '@/src/service/useSetNotification'
+import { secondsUntilTime } from '@/src/service/scheduleCustomNotification'
 
 export default function TabOneScreen() {
   const { mutate } = useSetNotification()
@@ -21,12 +22,24 @@ export default function TabOneScreen() {
     })
   }
 
+  const testTrigger = () => {
+    const seconds = secondsUntilTime(1, { hours: 10, minutes: 0 })
+    // return a date with format: 2022-01-01 00:00:00.000
+    return new Date(new Date().getTime() + seconds * 1000).toLocaleString()
+  }
+
   return (
     <View style={styles.container}>
       <View bg="$primary700" p="$10" borderRadius={15}>
         <Button onPress={testNotification} variant="outlined">
           <ButtonText> set NOTIFICATION</ButtonText>
         </Button>
+      </View>
+      <View bg="$primary900" p="$10" borderRadius={15}>
+        <Text>Trigger TEST</Text>
+        <Text>secondsUntilTime(1, hours: 10, minutes: 0 )</Text>
+
+        <Text>{testTrigger()}</Text>
       </View>
       {/* <View style={styles.separator} /> */}
     </View>

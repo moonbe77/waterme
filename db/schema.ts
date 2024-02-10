@@ -21,6 +21,7 @@ export const plants = sqliteTable('plants', {
   nextFertilizing: text('next_fertilizing'),
   lastFertilizing: text('last_fertilizing'),
   notificationTime: text('notification_time'),
+  notificationMinutes: text('notification_minuets'),
   notificationDay: text('notification_day'),
   notificationInterval: text('notification_interval'),
   notificationId: text('notification_id'),

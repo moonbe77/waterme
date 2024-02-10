@@ -58,7 +58,7 @@ function AppConfig() {
 
   const getTimeNext = (notification: Notifications.NotificationRequest) => {
     const data = notification.content.data
-    console.log('notification.content.data', data)
+    console.log('getTimeNext √', data)
     if (notification.trigger?.type === 'timeInterval') {
       const seconds = notification.trigger.seconds
       const date = new Date()

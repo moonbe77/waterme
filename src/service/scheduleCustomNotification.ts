@@ -19,10 +19,10 @@ export async function scheduleNotification(data: SetNotificationProps) {
   const trigger: Notifications.NotificationTriggerInput = {
     repeats: true,
     second: seconds,
-    timezone: 'Sydney/Australia',
+    // timezone: 'Sydney/Australia',
   }
 
-  console.log('trigger', { data, trigger })
+  console.log('trigger generated', { data, trigger })
 
   return Notifications.scheduleNotificationAsync({
     content: {
@@ -34,8 +34,6 @@ export async function scheduleNotification(data: SetNotificationProps) {
     trigger,
   })
 }
-
-// Don't forget to call this function in your app
 
 export const getAllNotifications = async () => {
   return Notifications.getAllScheduledNotificationsAsync()
@@ -55,7 +53,7 @@ export const getNextTriggerDate = async (
   notification: Notifications.NotificationRequest,
 ) => {
   const data = notification.content.data
-  console.log('notification.content.data', data)
+  console.log('getNextTriggerDate  LOL', data)
 
   if (notification.trigger?.type === 'timeInterval') {
     const next = await Notifications.getNextTriggerDateAsync({
@@ -91,7 +89,7 @@ export const getNextTriggerDate = async (
   // }
 }
 
-function secondsUntilTime(
+export function secondsUntilTime(
   intervalInDays: number,
   timeOfDay: {
     hours: number

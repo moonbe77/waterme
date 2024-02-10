@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
   Platform,
@@ -18,6 +17,7 @@ import {
   YStack,
   ScrollView,
   View,
+  XStack,
 } from 'tamagui'
 
 import { useNavigation } from 'expo-router'
@@ -59,8 +59,8 @@ export default function ModalScreen() {
       {
         days: Number(plant.notificationInterval),
         time: {
-          hours: 10,
-          minutes: 0,
+          hours: Number(plant.notificationTime),
+          minutes: Number(plant.notificationMinutes),
         },
         title: plant.name,
         body: plant.description ?? 'Here is the notification body ',
@@ -105,7 +105,7 @@ export default function ModalScreen() {
 
               <Input
                 id="description"
-                size="$6"
+                size="$5"
                 placeholder="Description"
                 rows={4}
                 onChangeText={(value) => actions.onChange('description', value)}
@@ -114,7 +114,7 @@ export default function ModalScreen() {
               />
               <Input
                 id="notificationInterval"
-                size="$6"
+                size="$5"
                 placeholder="Notification Interval in days"
                 inputMode="numeric"
                 onChangeText={(value) =>
@@ -123,6 +123,30 @@ export default function ModalScreen() {
                 value={plant.notificationInterval ?? ''}
                 width="100%"
               />
+              <XStack gap="$4" width="90%">
+                <Input
+                  id="notificationTime"
+                  // size="$6"
+                  placeholder="Notification Interval in days"
+                  inputMode="numeric"
+                  onChangeText={(value) =>
+                    actions.onChange('notificationTime', value)
+                  }
+                  value={plant.notificationTime ?? ''}
+                  width="50%"
+                />
+                <Input
+                  id="notificationMinutes"
+                  // size="$6"
+                  placeholder="Notification Interval in days"
+                  inputMode="numeric"
+                  onChangeText={(value) =>
+                    actions.onChange('notificationMinutes', value)
+                  }
+                  value={plant.notificationMinutes ?? ''}
+                  width="50%"
+                />
+              </XStack>
 
               {/* <View>
                 <Heading size="$3">Interval</Heading>
