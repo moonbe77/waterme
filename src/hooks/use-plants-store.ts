@@ -2,11 +2,8 @@
 import { db } from '@/db/client'
 import { plants, notifications, type Plant } from '@/db/schema'
 import { desc } from 'drizzle-orm'
-import moment from 'moment'
-import { create } from 'zustand'
 
-import { router } from 'expo-router'
-import { scheduleNotification } from '../service/notifications'
+import { create } from 'zustand'
 
 type SearchStore = {
   searchText: string
@@ -152,7 +149,8 @@ const useEditPlantStore = create<EditPlantStore>((set, get) => ({
           nextWatering,
           nextFertilizing,
           notificationTime,
-          updatedAt: new Date().toISOString(),
+          updatedAt: '',
+          createdAt: new Date().toISOString(),
           notificationInterval: notificationInterval,
           notificationId: id,
         })

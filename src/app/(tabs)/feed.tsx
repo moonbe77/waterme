@@ -22,10 +22,11 @@ import {
 } from '@/src/service/notifications'
 import type { NotificationRequest } from 'expo-notifications'
 import moment from 'moment'
+import { convertToTimeZone } from '@/src/service/scheduleCustomNotification'
 
 const zone = 'Australia/Sydney'
 
-function UTCtoSyd(date: Date) {
+function UTCtoSyd(date: moment.MomentInput) {
   //convert date to locale
   const local = tz(date).tz(zone).format('YYYY-MM-DD  hh:mm:ssA z')
 
@@ -39,7 +40,7 @@ const parseDate = (date: Date) => {
   return parsed
 }
 
-const getCreatedTime = (date: string) => {
+const getCreatedTime = (date: moment.MomentInput) => {
   const local = tz(date).tz(zone)
   const now = tz().tz(zone)
   const diff = now.diff(local, 'days')
@@ -107,6 +108,7 @@ const Item = ({
     NotificationRequest | undefined
   >()
   const [next, setNext] = useState<Date | undefined>()
+
   useEffect(() => {
     getNotificationById(item.id).then((res) => {
       setNotification(res)
@@ -115,19 +117,26 @@ const Item = ({
 
   useEffect(() => {
     if (!notification) return
+    const created = item.createdAt
+
     getNextTriggerDate(notification)
       .then((res) => {
-        if (typeof res === 'object' && 'toISOString' in res) {
-          setNext(res)
+        if (res) {
+          // calc interval to next notification
+          // res = seconds until next notification
+          const date = moment(created).add(res, 'seconds').toDate()
+
+          console.log('show Next', { res, date, created }, UTCtoSyd(date))
+          setNext(date)
         } else {
           setNext(undefined)
         }
       })
-      .catch((error) => {
+      .catch(() => {
         alert('Error getting next date')
         setNext(undefined)
       })
-  }, [notification])
+  }, [item, notification])
 
   const onPress = async (id: string) => {
     if (!notification) return
@@ -170,7 +179,7 @@ const Item = ({
           <Text fontSize="$6">Type: {notification?.trigger.type}</Text>
           <View my="$3">
             {next && <Text>UTC: {UTCtoSyd(next)}</Text>}
-            {next && <Text>UTC: {parseDate(next)}</Text>}
+            {/* {next && <Text>UTC: {parseDate(next)}</Text>} */}
           </View>
           {/* <Text fontSize="$6">Next Fertilizing: {item.nextFertilizing}</Text>
         <Text fontSize="$6">Next watering: {item.nextWatering}</Text> */}
