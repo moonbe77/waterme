@@ -11,7 +11,9 @@ import useSetNotification from '@/src/service/useSetNotification'
 import {
   Input,
   Text,
+  TextArea,
   Button,
+  Label,
   Heading,
   ButtonText,
   YStack,
@@ -93,59 +95,72 @@ export default function ModalScreen() {
               paddingHorizontal="$2"
               marginTop="$2"
             >
-              <Input
-                id="name"
-                size="$5"
-                placeholder="Name / Title"
-                // onChangeText={(value) => handleChange('name', value)}
-                onChangeText={(value) => actions.onChange('name', value)}
-                value={plant.name}
-                width="100%"
-              />
+              <Heading size="$3">Create a new plant</Heading>
+              <XStack gap="$2m" space="$4">
+                <Label>Plant Name</Label>
+                <Input
+                  id="name"
+                  flex={1}
+                  placeholder="Name / Title"
+                  onChangeText={(value) => actions.onChange('name', value)}
+                  value={plant.name}
+                />
+              </XStack>
+              <YStack gap="$0.5" width="100%" space="$4">
+                <Label>Description</Label>
+                <TextArea
+                  id="description"
+                  flex={1}
+                  placeholder="Description"
+                  rows={4}
+                  onChangeText={(value) => {
+                    actions.onChange('description', value)
+                  }}
+                  value={plant.description ?? ''}
+                />
+              </YStack>
 
-              <Input
-                id="description"
-                size="$5"
-                placeholder="Description"
-                rows={4}
-                onChangeText={(value) => actions.onChange('description', value)}
-                value={plant.description ?? ''}
-                width="100%"
-              />
-              <Input
-                id="notificationInterval"
-                size="$5"
-                placeholder="Notification Interval in days"
-                inputMode="numeric"
-                onChangeText={(value) =>
-                  actions.onChange('notificationInterval', value)
-                }
-                value={plant.notificationInterval ?? ''}
-                width="100%"
-              />
-              <XStack gap="$4" width="90%">
+              <XStack gap="$4" width="90%" space="$4">
+                <Label> Notification Interval</Label>
+
                 <Input
-                  id="notificationTime"
-                  // size="$6"
+                  id="notificationInterval"
+                  flex={1}
                   placeholder="Notification Interval in days"
                   inputMode="numeric"
                   onChangeText={(value) =>
-                    actions.onChange('notificationTime', value)
+                    actions.onChange('notificationInterval', value)
                   }
-                  value={plant.notificationTime ?? ''}
-                  width="50%"
+                  value={plant.notificationInterval ?? ''}
                 />
-                <Input
-                  id="notificationMinutes"
-                  // size="$6"
-                  placeholder="Notification Interval in days"
-                  inputMode="numeric"
-                  onChangeText={(value) =>
-                    actions.onChange('notificationMinutes', value)
-                  }
-                  value={plant.notificationMinutes ?? ''}
-                  width="50%"
-                />
+              </XStack>
+
+              <Heading size="$4">Time</Heading>
+              <XStack width="100%" gap="$4">
+                <YStack flex={1}>
+                  <Label> Hour</Label>
+                  <Input
+                    id="notificationHour"
+                    placeholder="Hours"
+                    inputMode="numeric"
+                    onChangeText={(value) =>
+                      actions.onChange('notificationTime', value)
+                    }
+                    value={plant.notificationTime ?? ''}
+                  />
+                </YStack>
+                <YStack flex={1}>
+                  <Label> Minutes</Label>
+                  <Input
+                    id="notificationMinute"
+                    placeholder="Notification Interval in days"
+                    inputMode="numeric"
+                    onChangeText={(value) =>
+                      actions.onChange('notificationMinutes', value)
+                    }
+                    value={plant.notificationMinutes ?? ''}
+                  />
+                </YStack>
               </XStack>
 
               {/* <View>

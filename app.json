@@ -5,8 +5,15 @@
     "slug": "waterme",
     "scheme": "waterme",
     "version": "1.0.0",
-    "plugins": ["expo-router", "expo-build-properties"],
-		"platforms": ["ios"],
+    "plugins": [
+      "expo-router",
+      "expo-build-properties",
+      "expo-font",
+      "expo-asset"
+    ],
+    "platforms": [
+      "ios"
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,12 +22,18 @@
       "resizeMode": "contain",
       "backgroundColor": "#fff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bmunz.waterme",
       "infoPlist": {
-        "UIBackgroundModes": ["location", "remote-notification", "notification"],
+        "UIBackgroundModes": [
+          "location",
+          "remote-notification",
+          "notification"
+        ],
         "NSLocationWhenInUseUsageDescription": "This app uses your location to provide you with the best experience.",
         "NSLocationAlwaysUsageDescription": "This app uses your location to provide you with the best experience.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses your location to provide you with the best experience."
@@ -35,8 +48,7 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-			"output": "static"
-
+      "output": "static"
     },
     "extra": {
       "eas": {

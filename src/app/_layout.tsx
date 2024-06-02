@@ -71,7 +71,7 @@ export function RootLayoutNav() {
           <Stack.Screen
             name="create"
             options={{
-              presentation: 'card',
+              presentation: 'modal',
               headerShown: true,
               title: 'Set a New Remainder',
             }}

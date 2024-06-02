@@ -1,4 +1,4 @@
-interface DbMeta {
+export interface DbMeta {
   createdOn: Date
   createdBy: string
   editedOn: Date

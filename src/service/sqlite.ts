@@ -11,7 +11,7 @@ export function openDatabase() {
   //   };
   // }
 
-  const db = SQLite.openDatabase('plants.db')
+  const db = SQLite.openDatabaseAsync('plants.db')
   return db
 }
 
@@ -20,21 +20,21 @@ export const checkDb = `
 SELECT name FROM sqlite_master WHERE type='table' AND name='plants';
 `
 
-export const logSqlQuery = (sql: string, args: any[]) => {
-  openDatabase().transaction((tx) => {
-    tx.executeSql(
-      sql,
-      [sql, JSON.stringify(args)],
-      (_, { rows }) => {
-        console.log('SQL Query: ', rows)
-      },
-      (_, error) => {
-        console.log('SQL Error: ', error)
-        return false
-      },
-    )
-  })
-}
+// export const logSqlQuery = async (sql: string, args: any[]) => {
+//   await openDatabase().transaction((tx) => {
+//     tx.executeSql(
+//       sql,
+//       [sql, JSON.stringify(args)],
+//       (_, { rows }) => {
+//         console.log('SQL Query: ', rows)
+//       },
+//       (_, error) => {
+//         console.log('SQL Error: ', error)
+//         return false
+//       },
+//     )
+//   })
+// }
 
 const createDb = `
 CREATE TABLE IF NOT EXISTS "plants" (
