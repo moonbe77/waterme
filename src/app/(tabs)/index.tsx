@@ -2,6 +2,10 @@ import { StyleSheet } from 'react-native'
 import { Button, ButtonText, View, Text } from 'tamagui'
 import useSetNotification from '@/src/service/useSetNotification'
 import { secondsUntilTime } from '@/src/service/scheduleCustomNotification'
+import {
+  getNextMondayTrigger,
+  logNextTriggerDate,
+} from '@/src/service/notifications'
 
 export default function TabOneScreen() {
   const { mutate } = useSetNotification()
@@ -28,11 +32,26 @@ export default function TabOneScreen() {
     return new Date(new Date().getTime() + seconds * 1000).toLocaleString()
   }
 
+  function addNotification() {
+    const nextMonday = getNextMondayTrigger(1, 9)
+    console.log({ nextMonday })
+  }
+
+  function logTrigger() {
+    logNextTriggerDate()
+  }
+
   return (
     <View style={styles.container}>
       <View bg="$primary700" p="$10" borderRadius={15}>
         <Button onPress={testNotification} variant="outlined">
           <ButtonText> set NOTIFICATION</ButtonText>
+        </Button>
+        <Button onPress={addNotification} variant="outlined">
+          <ButtonText> set Monday notification</ButtonText>
+        </Button>
+        <Button onPress={logNextTriggerDate} variant="outlined">
+          <ButtonText> log next trigger</ButtonText>
         </Button>
       </View>
       <View bg="$primary900" p="$10" borderRadius={15}>

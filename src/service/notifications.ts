@@ -38,3 +38,45 @@ export const getNextTriggerDate = async (
   }
   return null
 }
+
+export const getNextMondayTrigger = (day: number, time: number) => {
+  const today = new Date()
+  const nextMonday = new Date()
+  nextMonday.setDate(today.getDate() + ((1 + 7 - today.getDay()) % 7))
+
+  // If today is Monday, schedule for the next Monday
+  if (today.getDay() === 1) {
+    nextMonday.setDate(today.getDate() + 14)
+  }
+
+  // Find the Monday in the correct week interval
+  const currentWeek = Math.floor(today.getDate() / 7)
+  const targetWeek = currentWeek + 2 - (currentWeek % 2)
+  nextMonday.setDate(nextMonday.getDate() + (targetWeek - currentWeek) * 7)
+
+  return {
+    weekday: 1, // Monday
+    hour: 9,
+    minute: 0,
+    repeats: true,
+  }
+}
+
+export async function logNextTriggerDate() {
+  console.log('logNextTriggerDate')
+  try {
+    const nextTriggerDate = await Notifications.getNextTriggerDateAsync({
+      weekday: 2,
+      hour: 9,
+      minute: 0,
+    })
+    console.log({ nextTriggerDate })
+    console.log(
+      nextTriggerDate === null
+        ? 'No next trigger date'
+        : new Date(nextTriggerDate).getDay(),
+    )
+  } catch (e) {
+    console.warn(`Couldn't have calculated next trigger date: ${e}`)
+  }
+}
